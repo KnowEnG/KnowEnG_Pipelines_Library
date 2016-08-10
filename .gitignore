@@ -1,8 +1,10 @@
+# IDE
 .idea
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
 .Python
 env/
 develop-eggs/
