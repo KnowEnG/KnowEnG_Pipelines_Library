@@ -39,7 +39,5 @@ class TestFind_unique_node_names(TestCase):
         res.index=[1,2]
         self.assertEqual(True, ret.equals(res))
 
-
-
 if __name__ == '__main__':
     unittest.main()
