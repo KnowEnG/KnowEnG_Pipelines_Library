@@ -6,7 +6,6 @@ import pandas as pd
 
 class TestMap_node_names_to_index(TestCase):
     def test_node_1(self):
-
         network = pd.DataFrame([['a', 'b', 1], ['c', 'd', 1]])
         network.columns = ['node_1', 'node_2', 'wt']
         genes_map = {'a': 0, 'b': 1, 'c':2, 'd':3}
