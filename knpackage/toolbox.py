@@ -64,6 +64,13 @@ def get_spreadsheet_df(run_parameters):
     Returns:
         spreadsheet_df: the spreadsheet dataframe.
     """
+    try:
+        f = open(run_parameters['samples_file_name'], 'r')
+    except IOError:
+        print('cannot open', run_parameters['samples_file_name'])
+    else:
+        f.close()
+
     spreadsheet_df = pd.read_csv(
         run_parameters['samples_file_name'], sep='\t', header=0, index_col=0)
 
@@ -78,6 +85,13 @@ def get_network_df(network_name):
     Returns:
         network_df: 3-column dataframe of cleaned network
     """
+    try:
+        f = open(network_name)
+    except IOError:
+        print('cannot open', network_name)
+    else:
+        f.close()
+
     network_df = pd.read_csv(
         network_name, header=None, names=None, delimiter='\t', usecols=[0, 1, 2])
     network_df.columns = ['node_1', 'node_2', 'wt']
@@ -94,6 +108,14 @@ def extract_network_node_names(network_df):
         node_1_names: all names in column 1.
         node_list_2: all names in column 2.
     """
+    if network_df is None:
+        print('no input')
+        return
+
+    if len(df.columns)!=2:
+        print('wrong format, need two columns')
+        return
+        
     node_list_1 = list(set(network_df.values[:, 0]))
     node_list_2 = list(set(network_df.values[:, 1]))
 
