@@ -14,7 +14,5 @@ class TestSymmetrize_df(TestCase):
         print(res)
         self.assertEqual(True, compare_result.equals(res))
 
-
-
 if __name__ == '__main__':
     unittest.main()
