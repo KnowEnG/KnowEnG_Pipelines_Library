@@ -1,5 +1,5 @@
-from unittest import TestCase
 import unittest
+from unittest import TestCase
 import knpackage.toolbox as kn
 
 
@@ -18,6 +18,12 @@ class TestCreate_node_names_dict(TestCase):
         node_names = [4, "test1", 6, "test2"]
         res = kn.create_node_names_dict(node_names, start_value=8)
         compare_res = {4: 8, "test1": 9, 6: 10, "test2":11}
+        self.assertEqual(res, compare_res)
+
+    def test_empty_dict(self):
+        node_names = []
+        res = kn.create_node_names_dict(node_names, start_value=0)
+        compare_res = {}
         self.assertEqual(res, compare_res)
 
 if __name__ == '__main__':
