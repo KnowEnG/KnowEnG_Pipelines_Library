@@ -21,7 +21,15 @@ class TestFind_unique_node_names(TestCase):
         ret = kn.extract_spreadsheet_gene_names(spreadsheet_df)
         self.assertEqual(True, set(['a', 'b', 'c', 'd'])==set(ret))        
 
-    # def test_find_dropped_node_names(self):
+    def test_find_dropped_node_names(self):
+        df = pd.DataFrame([1,2,3], index=['a', 'b', 'c'])
+        unique_gene_names = ['a', 'b']
+        run_parameters = {'tmp_directory': './'}
+        file_name = 'test.txt'
+        kn.find_dropped_node_names(df, unique_gene_names, run_parameters, file_name)
+        ret = pd.read_csv(file_name, sep='\t', header=None, index_col=None)
+        res = pd.DataFrame(['c'])
+        self.assertEqual(True, ret.equals(res))
 
     def test_update_spreadsheet_df(self):
         spreadsheet_df = pd.DataFrame([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])
@@ -38,6 +46,19 @@ class TestFind_unique_node_names(TestCase):
         res = pd.DataFrame({'a': [2, 3]})
         res.index=[1, 2]
         self.assertEqual(True, ret.equals(res))
+
+    def test_append_column_to_spreadsheet(self):
+        spreadsheet_df = pd.DataFrame({'orig': [1,2,3]})
+        ret = kn.append_column_to_spreadsheet(spreadsheet_df, 1)
+        res = pd.DataFrame([[1,1.0], [2,0.0], [3,0.0]], columns=['orig', 'base'])
+        self.assertEqual(True, ret.equals(res))
+
+    # def test_normalize_df_by_sum(self):
+    #     network_df = pd.DataFrame({'a': [1,2,3]})
+    #     ret = kn.normalize_df_by_sum(network_df, 'a')
+    #     ret.round(5)
+    #     res = pd.DataFrame({'a': [0.16667,0.33333,0.5]})
+    #     self.assertEqual(True, ret.equals(res))
 
 if __name__ == '__main__':
     unittest.main()
