@@ -345,9 +345,9 @@ def append_column_to_spreadsheet(spreadsheet_df, column, col_name):
     # if col_name not in spreadsheet_df:
     #     print('invalid col_name')
     #     return False
-    if not column:
-        print('empty column input')
-        return False
+    # if not column:
+    #     print('empty column input')
+    #     return False
     spreadsheet_df[col_name] = column
 
     return spreadsheet_df
