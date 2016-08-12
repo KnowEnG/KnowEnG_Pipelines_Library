@@ -382,7 +382,7 @@ def form_hybrid_network_df(list_of_networks):
     if not list_of_networks:
         print('empty input')
         return False
-    return pd.concat(list_of_networks)
+    return pd.concat(list_of_networks, ignore_index=True)
 
 def normalize_sparse_mat_by_diagonal(network_mat):
     """ square root of inverse of diagonal D (D * network_mat * D) normaization.
