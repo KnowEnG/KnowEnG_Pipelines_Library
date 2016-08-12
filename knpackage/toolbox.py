@@ -216,7 +216,7 @@ def create_node_names_dict(node_names, start_value=0):
     Returns:
         node_names_dictionary: python dictionary of gene names to integer locations
     """
-    index_length = len(node_names) + start_value
+    index_length = len(list(node_names)) + start_value
     node_names_dictionary = dict(zip(node_names, np.arange(start_value, index_length)))
 
     return node_names_dictionary
