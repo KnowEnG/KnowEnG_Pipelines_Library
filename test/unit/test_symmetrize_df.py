@@ -5,6 +5,7 @@ import pandas as pd
 
 class TestSymmetrize_df(TestCase):
     def setUp(self):
+        self.network_none = None
         self.network = pd.DataFrame([[1, 3, 1], [2, 4, 1]],
                                     columns=['node_1', 'node_2', 'wt'])
         self.network_empty = pd.DataFrame({'node_1': [], 'node_2': [],
@@ -29,6 +30,11 @@ class TestSymmetrize_df(TestCase):
     def test_symmetrize_df_wrong_column_names(self):
         ret = kn.symmetrize_df(self.network_wrong_col)
         print("wrong column names")
+
+    def test_symmetrize_df_none(self):
+        ret = kn.symmetrize_df(self.network_none)
+        print("need input")
+
 
 if __name__ == '__main__':
     unittest.main()
