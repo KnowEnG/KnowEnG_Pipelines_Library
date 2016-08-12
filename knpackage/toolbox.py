@@ -360,7 +360,7 @@ def form_hybrid_network_df(list_of_networks):
     """
     return pd.concat(list_of_networks)
 
-def normalize_mat_by_diagonal(network_mat):
+def normalize_sparse_mat_by_diagonal(network_mat):
     """ square root of inverse of diagonal D (D * network_mat * D) normaization.
 
     Args:
