@@ -167,11 +167,8 @@ def find_dropped_node_names(spreadsheet_df, unique_gene_names):
         run_parameters: dictionary of parameters.
         file_name: droped genes list file name.
     """
-    # tmp_dir = run_parameters['tmp_directory']
     droplist = spreadsheet_df.loc[~spreadsheet_df.index.isin(unique_gene_names)]
-    # file_path = os.path.join(tmp_dir, file_name)
-    droplist = pd.DataFrame(droplist.index.values)
-
+    droplist = droplist.index.values
     return droplist
 
 def update_spreadsheet_df(spreadsheet_df, gene_names):
@@ -211,7 +208,7 @@ def create_node_names_dict(node_names, start_value=0):
     Returns:
         node_names_dictionary: python dictionary of gene names to integer locations
     """
-    index_length = len(node_names) + start_value
+    index_length = len(list(node_names)) + start_value
     node_names_dictionary = dict(zip(node_names, np.arange(start_value, index_length)))
 
     return node_names_dictionary
