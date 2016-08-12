@@ -48,6 +48,7 @@ def get_run_parameters(run_directory, run_file):
     run_file_name = os.path.join(run_directory, run_file)
     with open(run_file_name, 'r') as file_handle:
         run_parameters = yaml.load(file_handle)
+
     run_parameters["run_directory"] = run_directory
     run_parameters["run_file"] = run_file
 
@@ -64,12 +65,6 @@ def get_spreadsheet_df(run_parameters):
     Returns:
         spreadsheet_df: the spreadsheet dataframe.
     """
-    try:
-        f = open(run_parameters['samples_file_name'], 'r')
-    except IOError:
-        print('cannot open', run_parameters['samples_file_name'])
-    else:
-        f.close()
 
     spreadsheet_df = pd.read_csv(
         run_parameters['samples_file_name'], sep='\t', header=0, index_col=0)
