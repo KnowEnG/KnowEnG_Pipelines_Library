@@ -15,15 +15,6 @@ class TestMultiple_functions(TestCase):
     #     print(comp, ret)
     #     self.assertEqual(True, comp)
     #
-    # def test_symmetrize_df(self):
-    #     res = pd.DataFrame([[1, 2, 1], [3, 4, 1], [2, 1, 1], [4, 3, 1]])
-    #     res.columns = ['node_1', 'node_2', 'wt']
-    #     network = pd.DataFrame([[1, 2, 1], [3, 4, 1]])
-    #     network.columns = ['node_1', 'node_2', 'wt']
-    #     compare_result = kn.symmetrize_df(network)
-    #     print(compare_result)
-    #     print(res)
-    #     self.assertEqual(True, compare_result.equals(res))
     #
     # def test_convert_network_df_to_sparse(self):
     #     pg_network_df = pd.DataFrame([[1, 3, 1], [2, 4, 1]])
