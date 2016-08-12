@@ -178,7 +178,7 @@ def find_dropped_node_names(spreadsheet_df, unique_gene_names, run_parameters, f
     droplist = pd.DataFrame(droplist.index.values)
     droplist.to_csv(file_path, header=False, index=False)
 
-    return
+    return droplist.index.values
 
 def update_spreadsheet_df(spreadsheet_df, gene_names):
     """ resize and reorder spreadsheet dataframe to only the gene_names list.
@@ -326,7 +326,7 @@ def append_column_to_spreadsheet(spreadsheet_df, column, col_name):
         spreadsheet_df: user spreadsheet dataframe.
         column: the column to append, length = spreadsheet_df.shape[0]
         col_name: the column name for the appended column
-    Returns:
+    Returns:w
         spreadsheet_df: new dataframe with baseline vector appended in the last column.
     """
     spreadsheet_df[col_name] = column
