@@ -340,7 +340,7 @@ def append_column_to_spreadsheet(spreadsheet_df, column, col_name):
 
     return spreadsheet_df
 
-def normalize_df_by_sum(network_df, node_id):
+def normalize_network_df_by_sum(network_df, node_id):
     """ normalize the network column with numbers for input.
         Note: expecting zero or no diagonal.
 
