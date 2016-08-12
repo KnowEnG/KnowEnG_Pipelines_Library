@@ -107,8 +107,8 @@ def extract_network_node_names(network_df):
         print('empty network_df')
         return False
 
-    if network_df.shape[1] != 2:
-        print('needs two columns')
+    if network_df.shape[1] != 3:
+        print('needs three columns')
         return False
         
     node_list_1 = list(set(network_df.values[:, 0]))
@@ -352,7 +352,7 @@ def append_column_to_spreadsheet(spreadsheet_df, column, col_name):
 
     return spreadsheet_df
 
-def normalize_df_by_sum(network_df, node_id):
+def normalize_network_df_by_sum(network_df, node_id):
     """ normalize the network column with numbers for input.
         Note: expecting zero or no diagonal.
 

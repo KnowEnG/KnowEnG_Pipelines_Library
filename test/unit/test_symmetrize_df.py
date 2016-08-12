@@ -28,13 +28,13 @@ class TestSymmetrize_df(TestCase):
         compare_ret = pd.DataFrame({'node_1': [], 'node_2': [], 'wt': []})
         self.assertEqual(True, compare_ret.equals(ret))
 
-    def test_symmetrize_df_wrong_column_names(self):
-        ret = kn.symmetrize_df(self.network_wrong_col)
-        print("wrong column names")
-
-    def test_symmetrize_df_none(self):
-        ret = kn.symmetrize_df(self.network_none)
-        print("need input")
+    # def test_symmetrize_df_wrong_column_names(self):
+    #     ret = kn.symmetrize_df(self.network_wrong_col)
+    #     print("wrong column names")
+    #
+    # def test_symmetrize_df_none(self):
+    #     ret = kn.symmetrize_df(self.network_none)
+    #     print("need input")
 
 if __name__ == '__main__':
     unittest.main()
