@@ -103,13 +103,13 @@ def extract_network_node_names(network_df):
         node_1_names: all names in column 1.
         node_list_2: all names in column 2.
     """
-    if network_df is None:
-        print('no input')
-        return
+    if network_df.empty:
+        print('empty network_df')
+        return False
 
-    if len(network_df.columns)!=2:
-        print('wrong format, need two columns')
-        return
+    if network_df.shape[1] != 2:
+        print('needs two columns')
+        return False
         
     node_list_1 = list(set(network_df.values[:, 0]))
     node_list_2 = list(set(network_df.values[:, 1]))
@@ -179,11 +179,10 @@ def update_spreadsheet_df(spreadsheet_df, gene_names):
         unique_gene_names: list of all genes in network.
 
     Returns:
-        spreadsheet_df: pandas dataframe of spreadsheet with only network genes.
+        pandas dataframe of spreadsheet with only network genes.
     """
-    updated_spreadsheet_df = spreadsheet_df.loc[gene_names].fillna(0)
 
-    return updated_spreadsheet_df
+    return spreadsheet_df.loc[gene_names].fillna(0)
 
 def update_network_df(network, nodes_list, node_id):
     """ remove nodes not found as nodes_list in network node_id.
@@ -193,11 +192,13 @@ def update_network_df(network, nodes_list, node_id):
         intersection: user provided dataframe.
 
     Returns:
-        updated_network: network that contains (rows) nodes_list found in node_id.
+        network that contains (rows) nodes_list found in node_id.
     """
-    updated_network = network[network[node_id].isin(nodes_list)]
+    if node_id not in network:
+        print('invalid node_id')
+        return False
 
-    return updated_network
+    return network[network[node_id].isin(nodes_list)]
 
 def create_node_names_dict(node_names, start_value=0):
     """ create a python dictionary to look up gene locations from gene names
@@ -222,6 +223,9 @@ def create_reverse_node_names_dict(dictionary):
     Returns:
         reverse dictionary: dictionary.
     """
+    if not dictionary:
+        print('empty dictionary')
+        return False
     return {value: key for key, value in dictionary.items()}
 
 def symmetrize_df(network):
@@ -260,9 +264,9 @@ def map_node_names_to_index(network_df, genes_map, node_id):
     Returns:
         network_df: the same dataframe with integer indices in columns 0, 1.
     """
-    if node_id not in set(network_df.columns.values) :
-        print("Wrong node_id")
-        return
+    if node_id not in network_df:
+        print("invalid node_id")
+        return False
 
     network_df[node_id] = [genes_map[i] for i in network_df[node_id]]
 
@@ -321,10 +325,11 @@ def save_df(result_df, tmp_dir, file_name):
         tmp_dir: directory to save the result file.
         file_name: file name to save to.
     """
+    if not os.path.isdir("tmp_dir"):
+        print('invalid tmp_dir')
+        return False
     file_path = os.path.join(tmp_dir, file_name)
     result_df.to_csv(file_path, header=True, index=False, sep='\t')
-
-    return
 
 def append_column_to_spreadsheet(spreadsheet_df, column, col_name):
     """ append baseline vector of the user spreadsheet matrix.
@@ -336,6 +341,12 @@ def append_column_to_spreadsheet(spreadsheet_df, column, col_name):
     Returns:w
         spreadsheet_df: new dataframe with baseline vector appended in the last column.
     """
+    if col_name not in spreadsheet_df:
+        print('invalid col_name')
+        return False
+    if not column:
+        print('empty column input')
+        return False
     spreadsheet_df[col_name] = column
 
     return spreadsheet_df
@@ -351,6 +362,9 @@ def normalize_df_by_sum(network_df, node_id):
     Returns:
         network_df: the same dataframe with weight normalized.
     """
+    if node_id not in network_df:
+        print('invalid node_id')
+        return False
     network_df[node_id] /= network_df[node_id].sum()
 
     return network_df
@@ -365,6 +379,9 @@ def form_hybrid_network_df(list_of_networks):
     Returns:
         a combined hybrid network
     """
+    if not list_of_networks:
+        print('empty input')
+        return False
     return pd.concat(list_of_networks)
 
 def normalize_sparse_mat_by_diagonal(network_mat):
@@ -703,6 +720,9 @@ def append_run_parameters_dict(run_parameters, key_name, value_str):
     Returns:
         run_parameters: dictionary with new (or overwritten) key value pair.
     """
+    if not value_str or not key_name:
+        print('empty string input')
+        return False
     run_parameters[key_name] = value_str
 
     return run_parameters
