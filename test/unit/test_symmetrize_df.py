@@ -22,6 +22,7 @@ class TestSymmetrize_df(TestCase):
         compare_ret = pd.DataFrame([[1, 3, 1], [2, 4, 1], [3, 1, 1], [4, 2, 1]],
                                     columns=['node_1', 'node_2', 'wt'])
         self.assertEqual(True, compare_ret.equals(ret))
+        
     def test_symmetrize_df_empty(self):
         ret = kn.symmetrize_df(self.network_empty)
         compare_ret = pd.DataFrame({'node_1': [], 'node_2': [], 'wt': []})
@@ -34,7 +35,6 @@ class TestSymmetrize_df(TestCase):
     def test_symmetrize_df_none(self):
         ret = kn.symmetrize_df(self.network_none)
         print("need input")
-
 
 if __name__ == '__main__':
     unittest.main()

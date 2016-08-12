@@ -238,13 +238,13 @@ def symmetrize_df(network):
     Returns:
         symm_network: symm_network[r, c] == symm_network[c, r], (network extended).
     """
-    if network is None:
-        print('no input')
-        return
+    if not network:
+        print('empty network')
+        return False
 
     if list(network.columns.values)!=['node_1', 'node_2', 'wt']:
         print('wrong format, need to change column names')
-        return
+        return False
 
     transpose = pd.DataFrame()
     transpose['node_1'] = network['node_2']
