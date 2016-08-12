@@ -243,11 +243,19 @@ def symmetrize_df(network):
     Returns:
         symm_network: symm_network[r, c] == symm_network[c, r], (network extended).
     """
+    if network is None:
+        print('no input')
+        return
+
+    if list(network.columns.values)!=['node_1', 'node_2', 'wt']:
+        print('wrong format, need to change column names')
+        return
+
     transpose = pd.DataFrame()
     transpose['node_1'] = network['node_2']
     transpose['node_2'] = network['node_1']
     transpose['wt'] = network['wt']
-    symm_network = pd.concat([network, transpose])
+    symm_network = pd.concat([network, transpose], ignore_index=True)
 
     return symm_network
 
