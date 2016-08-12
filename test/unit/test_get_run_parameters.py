@@ -42,7 +42,6 @@ class TestGet_run_parameters(unittest.TestCase):
         self.assertDictEqual(run_parameters, self.golden_output)
 
 
-
 if __name__ == '__main__':
     unittest.main()
 
