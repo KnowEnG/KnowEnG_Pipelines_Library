@@ -298,8 +298,20 @@ def convert_network_df_to_sparse(pg_network_df, row_size, col_size):
     Returns:
         pg_network_sparse: sparse matrix of network gene set.
     """
+    if type(row_size)!=int or type(col_size)!=int:
+        print('Wrong sparse matrix size data type')
+        return
+    if pg_network_df.empty:
+        print("Empty input network")
+        return
+
     row_iden = pg_network_df.values[:, 1]
     col_iden = pg_network_df.values[:, 0]
+
+    if row_size-1<max(list(row_iden)) or col_size-1<max(list(col_iden)):
+        print('Size does not match')
+        return
+
     data = pg_network_df.values[:, 2]
     pg_network_sparse = spar.csr_matrix(
         (data, (row_iden, col_iden)), shape=(row_size, col_size))
