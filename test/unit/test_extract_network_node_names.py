@@ -8,7 +8,6 @@ class TestExtract_network_node_names(unittest.TestCase):
 
         self.network_df_good = pd.DataFrame([['ENSG00000001631','ENSG00000000005'],
                                         ['ENSG00000092054','ENSG00000000006']])
-
         self.network_df_bad = pd.DataFrame([['ENSG00000001631', 'ENSG00000000005', 3.4532771600248598e-06],
                                              ['ENSG00000092054', 'ENSG00000000006', 3.4532771600248598e-06]])
         self.golden_output_col0 = ['ENSG00000001631', 'ENSG00000092054']
@@ -34,7 +33,9 @@ class TestExtract_network_node_names(unittest.TestCase):
         ret_value = knpkg.extract_network_node_names(None)
         self.assertEqual(ret_value, None)
 
+
 if __name__ == '__main__':
     unittest.main()
+
 
 

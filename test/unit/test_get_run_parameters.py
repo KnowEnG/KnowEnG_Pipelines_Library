@@ -27,6 +27,7 @@ class TestGet_run_parameters(unittest.TestCase):
         del self.run_file
         del self.config_dir
         del self.golden_output
+        shutil.rmtree(self.config_dir)
 
     def createFile(self, dir_name, file_name, file_content):
         os.makedirs(dir_name, mode=0o755, exist_ok=True)
@@ -39,7 +40,6 @@ class TestGet_run_parameters(unittest.TestCase):
         self.createFile(self.config_dir, self.run_file, self.f_context)
         run_parameters = knpkg.get_run_parameters(self.config_dir, self.run_file)
         self.assertDictEqual(run_parameters, self.golden_output)
-        shutil.rmtree(self.config_dir)
 
 
 if __name__ == '__main__':
