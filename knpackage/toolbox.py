@@ -319,18 +319,17 @@ def save_df(result_df, tmp_dir, file_name):
 
     return
 
-def append_column_to_spreadsheet(spreadsheet_df, len_gene):
+def append_column_to_spreadsheet(spreadsheet_df, column, col_name):
     """ append baseline vector of the user spreadsheet matrix.
 
     Args:
         spreadsheet_df: user spreadsheet dataframe.
-        len_gene: length of genes in the user spreadsheet.
-
+        column: the column to append, length = spreadsheet_df.shape[0]
+        col_name: the column name for the appended column
     Returns:
         spreadsheet_df: new dataframe with baseline vector appended in the last column.
     """
-    property_size = spreadsheet_df.shape[0] - len_gene
-    spreadsheet_df["base"] = np.append(np.ones(len_gene), np.zeros(property_size))
+    spreadsheet_df[col_name] = column
 
     return spreadsheet_df
 
