@@ -325,9 +325,10 @@ def save_df(result_df, tmp_dir, file_name):
         tmp_dir: directory to save the result file.
         file_name: file name to save to.
     """
-    if not os.path.isdir("tmp_dir"):
+    if not os.path.isdir(tmp_dir):
         print('invalid tmp_dir')
         return False
+        
     file_path = os.path.join(tmp_dir, file_name)
     result_df.to_csv(file_path, header=True, index=False, sep='\t')
 
@@ -720,8 +721,11 @@ def append_run_parameters_dict(run_parameters, key_name, value_str):
     Returns:
         run_parameters: dictionary with new (or overwritten) key value pair.
     """
-    if not value_str or not key_name:
-        print('empty string input')
+    if not value_str:
+        print('empty value_str')
+        return False
+    if not key_name:
+        print('empty key_name')
         return False
     run_parameters[key_name] = value_str
 
