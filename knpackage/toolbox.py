@@ -167,11 +167,8 @@ def find_dropped_node_names(spreadsheet_df, unique_gene_names):
         run_parameters: dictionary of parameters.
         file_name: droped genes list file name.
     """
-    # tmp_dir = run_parameters['tmp_directory']
     droplist = spreadsheet_df.loc[~spreadsheet_df.index.isin(unique_gene_names)]
-    # file_path = os.path.join(tmp_dir, file_name)
-    droplist = pd.DataFrame(droplist.index.values)
-
+    droplist = droplist.index.values
     return droplist
 
 def update_spreadsheet_df(spreadsheet_df, gene_names):
