@@ -365,7 +365,7 @@ def form_hybrid_network_df(list_of_networks):
     Returns:
         a combined hybrid network
     """
-    return pd.concat(list_of_networks)
+    return pd.concat(list_of_networks, ignore_index=True)
 
 def normalize_sparse_mat_by_diagonal(network_mat):
     """ square root of inverse of diagonal D (D * network_mat * D) normaization.
