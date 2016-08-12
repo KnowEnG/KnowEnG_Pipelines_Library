@@ -16,10 +16,10 @@ class TestExtract_spreadsheet_gene_names(TestCase):
         ret = kn.extract_spreadsheet_gene_names(self.spreadsheet)
         self.assertEqual(set(ret), set(['a', 'b', 'c']), 'wrong output')
 
-    def test_extract_spreadsheet_gene_names_empty(self):
         ret = kn.extract_spreadsheet_gene_names(self.spreadsheet_empty)
         self.assertEqual(set(ret), set([]),
                          'wrong output for empty spreadsheet')
 
+    # def test_extract_spreadsheet_gene_names_empty(self):
 if __name__ == '__main__':
     unittest.main()
