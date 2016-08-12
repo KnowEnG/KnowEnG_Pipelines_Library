@@ -107,8 +107,8 @@ def extract_network_node_names(network_df):
         print('empty network_df')
         return False
 
-    if network_df.shape[1] != 2:
-        print('needs two columns')
+    if network_df.shape[1] != 3:
+        print('needs three columns')
         return False
         
     node_list_1 = list(set(network_df.values[:, 0]))
