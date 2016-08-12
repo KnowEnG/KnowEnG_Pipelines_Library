@@ -112,7 +112,7 @@ def extract_network_node_names(network_df):
         print('no input')
         return
 
-    if len(df.columns)!=2:
+    if len(network_df.columns)!=2:
         print('wrong format, need two columns')
         return
         
@@ -449,7 +449,7 @@ def smooth_matrix_with_rwr(restart, network_sparse, run_parameters):
     smooth_r = (1. - alpha) * restart
     for step in range(0, int(run_parameters["number_of_iteriations_in_rwr"])):
         smooth_1 = alpha * network_sparse.dot(smooth_0) + smooth_r
-        deltav = LA.norm(smooth_1 - smooth_0, 'fro')
+        deltav = LA.norm(smooth_1 - smooth_0)
         if deltav < tol:
             break
         smooth_0 = smooth_1
