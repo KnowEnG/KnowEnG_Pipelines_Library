@@ -3,18 +3,21 @@ import unittest
 import knpackage.toolbox as kn
 
 class TestCreate_reverse_node_names_dict(TestCase):
-    def test_dict_size_one(self):
-        res = kn.create_reverse_node_names_dict({'a': 0})
-        compare_res = {0: 'a'}
-        self.assertEqual(res, compare_res)
-    def test_dict_size_three_mix_type(self):
-        res = kn.create_reverse_node_names_dict({'a': 0, 1: 'b', 2: 8})
-        compare_res = {0: 'a', 'b': 1, 8: 2}
-        self.assertEqual(res, compare_res)
-    def test_dict_empty(self):
-        res = kn.create_reverse_node_names_dict({})
-        compare_res = {}
-        self.assertEqual(res, compare_res)
+    def setUp(self):
+        self.dictionary = {'a': 0, 'b': 1, 'c': 2}
+        self.dictionary_empty = {}
+
+    def tearDown(self):
+        del self.dictionary
+        del self.dictionary_empty
+
+    def test_create_reverse_node_names_dict(self):
+        ret = kn.create_reverse_node_names_dict(self.dictionary)
+        self.assertEqual(ret, {0: 'a', 1: 'b', 2: 'c'}, 'wrong output')
+
+    def test_create_reverse_node_names_dict_empty(self):
+        ret = kn.create_reverse_node_names_dict(self.dictionary_empty)
+        self.assertEqual(ret, {}, 'wrong output for empty dictionary')
 
 if __name__ == '__main__':
     unittest.main()
