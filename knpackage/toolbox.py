@@ -162,7 +162,7 @@ def extract_spreadsheet_gene_names(spreadsheet_df):
 
     return spreadsheet_gene_names
 
-def find_dropped_node_names(spreadsheet_df, unique_gene_names, run_parameters, file_name):
+def find_dropped_node_names(spreadsheet_df, unique_gene_names):
     """ write list of genes dropped from the input spreadsheed to
         run_parameters['tmp_directory'].file_name.
 
@@ -172,13 +172,12 @@ def find_dropped_node_names(spreadsheet_df, unique_gene_names, run_parameters, f
         run_parameters: dictionary of parameters.
         file_name: droped genes list file name.
     """
-    tmp_dir = run_parameters['tmp_directory']
+    # tmp_dir = run_parameters['tmp_directory']
     droplist = spreadsheet_df.loc[~spreadsheet_df.index.isin(unique_gene_names)]
-    file_path = os.path.join(tmp_dir, file_name)
+    # file_path = os.path.join(tmp_dir, file_name)
     droplist = pd.DataFrame(droplist.index.values)
-    droplist.to_csv(file_path, header=False, index=False)
 
-    return droplist.index.values
+    return droplist
 
 def update_spreadsheet_df(spreadsheet_df, gene_names):
     """ resize and reorder spreadsheet dataframe to only the gene_names list.
