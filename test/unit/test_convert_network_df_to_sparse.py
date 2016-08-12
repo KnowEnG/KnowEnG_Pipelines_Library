@@ -21,9 +21,10 @@ class TestConvert_network_df_to_sparse(TestCase):
 
     def test_convert_empty_network_df_to_sparse(self):
         ret = kn.convert_network_df_to_sparse(self.pg_network_df_empty, 0, 0)
-        compare_result = csr_matrix(([], ([], [])), (0, 0))
-        self.assertEqual(0, (ret - compare_result).nnz,
-                         "wrong output of empty pg_network_df")
+
+    def test_sparse_size(self):
+        ret = kn.convert_network_df_to_sparse(self.pg_network_df, 5.5, 5)
+        ret = kn.convert_network_df_to_sparse(self.pg_network_df, 4, 4)
 
 if __name__ == '__main__':
     unittest.main()
