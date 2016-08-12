@@ -178,7 +178,7 @@ def find_dropped_node_names(spreadsheet_df, unique_gene_names, run_parameters, f
     droplist = pd.DataFrame(droplist.index.values)
     droplist.to_csv(file_path, header=False, index=False)
 
-    return
+    return droplist.index.values
 
 def update_spreadsheet_df(spreadsheet_df, gene_names):
     """ resize and reorder spreadsheet dataframe to only the gene_names list.
@@ -331,18 +331,17 @@ def save_df(result_df, tmp_dir, file_name):
 
     return
 
-def append_column_to_spreadsheet(spreadsheet_df, len_gene):
+def append_column_to_spreadsheet(spreadsheet_df, column, col_name):
     """ append baseline vector of the user spreadsheet matrix.
 
     Args:
         spreadsheet_df: user spreadsheet dataframe.
-        len_gene: length of genes in the user spreadsheet.
-
-    Returns:
+        column: the column to append, length = spreadsheet_df.shape[0]
+        col_name: the column name for the appended column
+    Returns:w
         spreadsheet_df: new dataframe with baseline vector appended in the last column.
     """
-    property_size = spreadsheet_df.shape[0] - len_gene
-    spreadsheet_df["base"] = np.append(np.ones(len_gene), np.zeros(property_size))
+    spreadsheet_df[col_name] = column
 
     return spreadsheet_df
 
@@ -373,7 +372,7 @@ def form_hybrid_network_df(list_of_networks):
     """
     return pd.concat(list_of_networks)
 
-def normalize_mat_by_diagonal(network_mat):
+def normalize_sparse_mat_by_diagonal(network_mat):
     """ square root of inverse of diagonal D (D * network_mat * D) normaization.
 
     Args:
