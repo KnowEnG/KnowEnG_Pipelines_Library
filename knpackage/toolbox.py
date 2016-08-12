@@ -342,9 +342,9 @@ def append_column_to_spreadsheet(spreadsheet_df, column, col_name):
     Returns:w
         spreadsheet_df: new dataframe with baseline vector appended in the last column.
     """
-    if col_name not in spreadsheet_df:
-        print('invalid col_name')
-        return False
+    # if col_name not in spreadsheet_df:
+    #     print('invalid col_name')
+    #     return False
     if not column:
         print('empty column input')
         return False
