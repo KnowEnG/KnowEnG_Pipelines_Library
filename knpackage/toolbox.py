@@ -263,6 +263,10 @@ def map_node_names_to_index(network_df, genes_map, node_id):
     Returns:
         network_df: the same dataframe with integer indices in columns 0, 1.
     """
+    if node_id not in set(network_df.columns.values) :
+        print("Wrong node_id")
+        return
+
     network_df[node_id] = [genes_map[i] for i in network_df[node_id]]
 
     return network_df
