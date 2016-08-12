@@ -7,21 +7,7 @@ import numpy as np
 import os
 
 class TestMultiple_functions(TestCase):
-    # def test_append_column_to_spreadsheet(self):
-    #     spreadsheet_df = pd.DataFrame([1, 0, 0, 0, 0, 0, 0], columns=['GS1'])
-    #     len_gene = 5
-    #     ret = kn.append_column_to_spreadsheet(spreadsheet_df, len_gene)
-    #     comp = ret.equals(pd.DataFrame({'GS1': [1, 0, 0, 0, 0, 0, 0], 'base': [1, 1, 1, 1, 1, 0, 0]}))
-    #     print(comp, ret)
-    #     self.assertEqual(True, comp)
-    #
-    #
-    # def test_convert_network_df_to_sparse(self):
-    #     pg_network_df = pd.DataFrame([[1, 3, 1], [2, 4, 1]])
-    #     res = kn.convert_network_df_to_sparse(pg_network_df, 5, 5)
-    #     compare_result = csr_matrix(([1, 1], ([3, 4], [1, 2])), (5, 5))
-    #     self.assertEqual(0, (res-compare_result).nnz)
-    #
+
     # def test_create_df_with_sample_labels(self):
     #     sample_names = np.array(['a', 'b', 'c'])
     #     labels = np.array([0, 1, 2])
