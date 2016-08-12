@@ -24,6 +24,7 @@ class TestGet_spreadsheet_df(unittest.TestCase):
         del self.user_spreadsheet
         del self.full_file_path
         del self.run_parameter_template
+        shutil.rmtree(self.config_dir)
 
     def createFile(self, dir_name, file_name, file_content):
         os.makedirs(dir_name, mode=0o755, exist_ok=True)
@@ -40,8 +41,9 @@ class TestGet_spreadsheet_df(unittest.TestCase):
         self.createFile(self.config_dir, self.user_spreadsheet, data)
         spreadsheet = knpkg.get_spreadsheet_df(self.run_parameter_template)
         npytest.assert_array_equal(golden_output,spreadsheet)
-        shutil.rmtree(self.config_dir)
 
 
 if __name__ == '__main__':
     unittest.main()
+
+
