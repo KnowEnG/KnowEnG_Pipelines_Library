@@ -18,11 +18,12 @@ class TestGet_spreadsheet_df(unittest.TestCase):
         }
 
     def tearDown(self):
-        del self.config_dir
+        shutil.rmtree(self.config_dir)
         del self.user_spreadsheet
         del self.full_file_path
         del self.run_parameter_template
-        shutil.rmtree(self.config_dir)
+        del self.config_dir
+
 
     def createFile(self, dir_name, file_name, file_content):
         os.makedirs(dir_name, mode=0o755, exist_ok=True)
