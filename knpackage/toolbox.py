@@ -103,7 +103,8 @@ def extract_network_node_names(network_df):
         node_1_names: all names in column 1.
         node_list_2: all names in column 2.
     """
-        
+
+
     node_list_1 = list(set(network_df.values[:, 0]))
     node_list_2 = list(set(network_df.values[:, 1]))
 
