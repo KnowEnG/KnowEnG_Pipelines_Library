@@ -20,11 +20,11 @@ class TestGet_run_parameters(unittest.TestCase):
         }
 
     def tearDown(self):
+        shutil.rmtree(self.config_dir)
         del self.f_context
         del self.run_file
         del self.config_dir
         del self.golden_output
-        shutil.rmtree(self.config_dir)
 
     def createFile(self, dir_name, file_name, file_content):
         os.makedirs(dir_name, mode=0o755, exist_ok=True)
