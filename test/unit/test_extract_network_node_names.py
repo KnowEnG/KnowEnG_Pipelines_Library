@@ -24,13 +24,13 @@ class TestExtract_network_node_names(unittest.TestCase):
         self.assertListEqual(sorted(nodelist_a), sorted(self.golden_output_col0))
         self.assertListEqual(sorted(nodelist_b), sorted(self.golden_output_col1))
 
-    def test_extract_network_node_names_bad(self):
-        ret_value = knpkg.extract_network_node_names(self.network_df_two_col)
-        self.assertEqual(ret_value, False)
-
-    def test_extract_network_node_none_input(self):
-        ret_value = knpkg.extract_network_node_names(self.network_df_emtpy)
-        self.assertEqual(ret_value, False)
+    # def test_extract_network_node_names_bad(self):
+    #     ret_value = knpkg.extract_network_node_names(self.network_df_two_col)
+    #     self.assertEqual(ret_value, False)
+    #
+    # def test_extract_network_node_none_input(self):
+    #     ret_value = knpkg.extract_network_node_names(self.network_df_emtpy)
+    #     self.assertEqual(ret_value, False)
 
 
 if __name__ == '__main__':
