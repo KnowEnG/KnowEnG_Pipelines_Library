@@ -10,10 +10,10 @@ commandLine>> run KnowEnG_UnitTestsRunner.py
 
 lanier4@illinois.edu
 """
-sample_clustering_unit_test_directory = '/Users/del/Sample_Clustering_Pipeline/test/uint'
+#sample_clustering_unit_test_directory = '/Users/del/Sample_Clustering_Pipeline/test/uint'
 import unittest
-import sys
-sys.path.extend(sample_clustering_unit_test_directory)
+#import sys
+#sys.path.extend(sample_clustering_unit_test_directory)
 import test_clustering_functions as tkeg
 
 #                               method A
