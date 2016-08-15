@@ -103,13 +103,6 @@ def extract_network_node_names(network_df):
         node_1_names: all names in column 1.
         node_list_2: all names in column 2.
     """
-    if network_df.empty:
-        print('empty network_df')
-        return False
-
-    if network_df.shape[1] != 3:
-        print('needs three columns')
-        return False
         
     node_list_1 = list(set(network_df.values[:, 0]))
     node_list_2 = list(set(network_df.values[:, 1]))
@@ -194,9 +187,6 @@ def update_network_df(network, nodes_list, node_id):
     Returns:
         network that contains (rows) nodes_list found in node_id.
     """
-    if node_id not in network:
-        print('invalid node_id')
-        return False
 
     return network[network[node_id].isin(nodes_list)]
 
@@ -223,9 +213,7 @@ def create_reverse_node_names_dict(dictionary):
     Returns:
         reverse dictionary: dictionary.
     """
-    if not dictionary:
-        print('empty dictionary')
-        return False
+
     return {value: key for key, value in dictionary.items()}
 
 def symmetrize_df(network):
@@ -238,13 +226,13 @@ def symmetrize_df(network):
     Returns:
         symm_network: symm_network[r, c] == symm_network[c, r], (network extended).
     """
-    if not network:
-        print('empty network')
-        return False
-
-    if list(network.columns.values)!=['node_1', 'node_2', 'wt']:
-        print('wrong format, need to change column names')
-        return False
+    # if not network:
+    #     print('empty network')
+    #     return False
+    #
+    # if list(network.columns.values)!=['node_1', 'node_2', 'wt']:
+    #     print('wrong format, need to change column names')
+    #     return False
 
     transpose = pd.DataFrame()
     transpose['node_1'] = network['node_2']
@@ -264,9 +252,9 @@ def map_node_names_to_index(network_df, genes_map, node_id):
     Returns:
         network_df: the same dataframe with integer indices in columns 0, 1.
     """
-    if node_id not in network_df:
-        print("invalid node_id")
-        return False
+    # if node_id not in network_df:
+    #     print("invalid node_id")
+    #     return False
 
     network_df[node_id] = [genes_map[i] for i in network_df[node_id]]
 
@@ -297,19 +285,19 @@ def convert_network_df_to_sparse(pg_network_df, row_size, col_size):
     Returns:
         pg_network_sparse: sparse matrix of network gene set.
     """
-    if type(row_size)!=int or type(col_size)!=int:
-        print('Wrong sparse matrix size data type')
-        return
-    if pg_network_df.empty:
-        print("Empty input network")
-        return
+    # if type(row_size)!=int or type(col_size)!=int:
+    #     print('Wrong sparse matrix size data type')
+    #     return
+    # if pg_network_df.empty:
+    #     print("Empty input network")
+    #     return
 
     row_iden = pg_network_df.values[:, 1]
     col_iden = pg_network_df.values[:, 0]
 
-    if row_size-1<max(list(row_iden)) or col_size-1<max(list(col_iden)):
-        print('Size does not match')
-        return
+    # if row_size-1<max(list(row_iden)) or col_size-1<max(list(col_iden)):
+    #     print('Size does not match')
+    #     return
 
     data = pg_network_df.values[:, 2]
     pg_network_sparse = spar.csr_matrix(
@@ -325,9 +313,9 @@ def save_df(result_df, tmp_dir, file_name):
         tmp_dir: directory to save the result file.
         file_name: file name to save to.
     """
-    if not os.path.isdir(tmp_dir):
-        print('invalid tmp_dir')
-        return False
+    # if not os.path.isdir(tmp_dir):
+    #     print('invalid tmp_dir')
+    #     return False
         
     file_path = os.path.join(tmp_dir, file_name)
     result_df.to_csv(file_path, header=True, index=False, sep='\t')
@@ -363,9 +351,9 @@ def normalize_network_df_by_sum(network_df, node_id):
     Returns:
         network_df: the same dataframe with weight normalized.
     """
-    if node_id not in network_df:
-        print('invalid node_id')
-        return False
+    # if node_id not in network_df:
+    #     print('invalid node_id')
+    #     return False
     network_df[node_id] /= network_df[node_id].sum()
 
     return network_df
@@ -380,9 +368,9 @@ def form_hybrid_network_df(list_of_networks):
     Returns:
         a combined hybrid network
     """
-    if not list_of_networks:
-        print('empty input')
-        return False
+    # if not list_of_networks:
+    #     print('empty input')
+    #     return False
     return pd.concat(list_of_networks, ignore_index=True)
 
 def normalize_sparse_mat_by_diagonal(network_mat):
