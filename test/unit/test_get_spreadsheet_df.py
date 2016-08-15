@@ -8,7 +8,6 @@ import numpy.testing as npytest
 
 class TestGet_spreadsheet_df(unittest.TestCase):
     def setUp(self):
-        print("In setUp()")
         self.config_dir = "./config_tmp"
         self.user_spreadsheet = "user_spreadsheet.csv"
         self.full_file_path = os.path.join(self.config_dir, self.user_spreadsheet)
@@ -19,7 +18,6 @@ class TestGet_spreadsheet_df(unittest.TestCase):
         }
 
     def tearDown(self):
-        print("In tearDown()")
         del self.config_dir
         del self.user_spreadsheet
         del self.full_file_path
@@ -33,7 +31,6 @@ class TestGet_spreadsheet_df(unittest.TestCase):
         f.close()
 
     def test_get_spreadsheet_df(self):
-        print("In test_get_spreadsheet_df()")
         data = "\tcol1\tcol2\tcol3\n" + \
                "row1\t6\t7\t8\n" + \
                "row2\t1\t1\t2\n"
