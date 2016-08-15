@@ -7,8 +7,6 @@ import knpackage.toolbox as knpkg
 
 class TestGet_run_parameters(unittest.TestCase):
     def setUp(self):
-        print("In setUp()")
-
         self.f_context = yaml.dump(dict(method="cc_cluster_nmf", k=4),
                                    default_flow_style=True)
 
@@ -22,7 +20,6 @@ class TestGet_run_parameters(unittest.TestCase):
         }
 
     def tearDown(self):
-        print("In tearDown()")
         del self.f_context
         del self.run_file
         del self.config_dir
@@ -36,7 +33,6 @@ class TestGet_run_parameters(unittest.TestCase):
         f.close()
 
     def test_run_file(self):
-        print("In test_get_run_parameters()")
         self.createFile(self.config_dir, self.run_file, self.f_context)
         run_parameters = knpkg.get_run_parameters(self.config_dir, self.run_file)
         self.assertDictEqual(run_parameters, self.golden_output)

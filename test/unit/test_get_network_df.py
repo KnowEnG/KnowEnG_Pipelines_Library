@@ -7,8 +7,6 @@ import pandas as pd
 
 class TestGet_network_df(unittest.TestCase):
     def setUp(self):
-        print("In setUp()")
-
         self.network_file = "final_clean_4col.edge"
         self.config_dir = "./config_tmp"
         self.network_name = os.path.join(self.config_dir, self.network_file)
@@ -20,7 +18,6 @@ class TestGet_network_df(unittest.TestCase):
 
     # Cleans up variables
     def tearDown(self):
-        print("In tearDown()")
         del self.network_file
         del self.network_data
         del self.config_dir
@@ -33,7 +30,6 @@ class TestGet_network_df(unittest.TestCase):
         f.close()
 
     def test_run_file(self):
-        print("In test_get_run_parameters()")
         self.createFile(self.config_dir, self.network_file, self.network_data)
         network_df = knpkg.get_network_df(self.network_name)
         npytest.assert_array_equal(network_df, self.golden_output)
