@@ -4,39 +4,102 @@
 import unittest
 import os
 import numpy as np
-#import numpy.linalg as LA
 import scipy.sparse as spar
 import scipy.stats as stats
 
 # file version to test
 import knpackage.toolbox as kn
 
-class test_clustering_functions(unittest.TestCase):
-    
+
+def get_cluster_indices_list(a_arr):
+    """ get the list of sets of positive integers in the input array where a set
+        is the index of where equal values occur for all equal values in the array
+
+    Args:
+        a_arr: array of positive integers
+
+    Returns:
+        cluster_list: list of lists where each list is the indecies of the members
+            of that set, and the lists are ordered by the first member of each.
+    """
+    idx_arr = np.arange(0, a_arr.size)
+    a_arr_unique = np.unique(a_arr)
+    tmp_list = []
+    for v in a_arr_unique:
+        tmp_list.append(idx_arr[a_arr == v])
+
+    first_member_array = np.int_(np.zeros(len(tmp_list)))
+    for m in range(0, first_member_array.size):
+        tmp = tmp_list[m]
+        first_member_array[m] = int(tmp[0])
+
+    list_order = np.int_(np.argsort(first_member_array))
+    cluster_list = []
+    for t in list_order:
+        cluster_list.append(tmp_list[t])
+
+    return cluster_list
+
+
+def sets_a_eq_b(a, b):
+    """ true or false: the equal integer value sets in array a
+        are the same indeces as the equal value sets in array b
+
+    Args:
+        a: integer array
+        b: anothe integer array
+
+    Returns:
+        True if both arrays are the same size and the indices of
+            their values are the same
+            otherwise returns False
+    """
+    a_u = np.unique(a)
+    b_u = np.unique(b)
+    if len(a_u) != len(b_u):
+        return False
+    else:
+        a_list = get_cluster_indices_list(a)
+        b_list = get_cluster_indices_list(b)
+        if len(b) != len(a):
+            return False
+        else:
+            n_here = 0
+            for a_set in a_list:
+                if (len(a_set) != len(b_list[n_here])):
+                    return False
+                elif sum(np.int_(a_set != b_list[n_here])) != 0:
+                    return False
+                else:
+                    n_here += 1
+    return True
+
+
+class toolbox_test(unittest.TestCase):
     def get_run_parameters(self):
-        run_parameters = {'test_directory':'/Users/lanier4/BigDataTank/unit_test_development',
-                            'k':3,'number_of_iteriations_in_rwr':100,
-                            'obj_fcn_chk_freq':50,
-                            'it_max':10000,
-                            'h_clust_eq_limit':100,
-                            'restart_tolerance':0.0001,
-                            'lmbda':1400,
-                            'percent_sample':0.8,
-                            'number_of_bootstraps':3,
-                            'display_clusters':1,
-                            'restart_probability':0.7,
-                            'verbose':1,
-                            'use_now_name':1000000}
+        run_parameters = {'test_directory': '/Users/del/AllCodeBigData/KnowEnG_tbx_test/testTank',
+                          'k': 3, 'number_of_iteriations_in_rwr': 100,
+                          'obj_fcn_chk_freq': 50,
+                          'it_max': 10000,
+                          'h_clust_eq_limit': 100,
+                          'restart_tolerance': 0.0001,
+                          'lmbda': 1400,
+                          'percent_sample': 0.8,
+                          'number_of_bootstraps': 3,
+                          'display_clusters': 1,
+                          'restart_probability': 0.7,
+                          'verbose': 1,
+                          'use_now_name': 1000000}
 
         return run_parameters
-    
+
     def test_get_quantile_norm_matrix(self):
-        a = np.array([[7.0, 5.0],[3.0, 1.0],[1.0,7.0]])
-        aQN = np.array([[7.0, 4.0],[4.0,1.0],[1.0,7.0]])
+        a = np.array([[7.0, 5.0], [3.0, 1.0], [1.0, 7.0]])
+        aQN = np.array([[7.0, 4.0], [4.0, 1.0], [1.0, 7.0]])
         qn1 = kn.get_quantile_norm_matrix(a)
-        
+
         self.assertEqual(sum(sum(qn1 != aQN)), 0, 'Quantile Norm 1 Not Equal')
-        
+
     def test_smooth_matrix_with_rwr(self):
         """ Assert that a test matrix will converge to the precomputed answer in
             the predicted number of steps (iterations). Depends on run_parameters
@@ -47,17 +110,17 @@ class test_clustering_functions(unittest.TestCase):
         run_parameters['restart_probability'] = 1
         run_parameters['restart_tolerance'] = 1e-12
         F0 = np.eye(2)
-        A = spar.csr_matrix(( (np.eye(2) + np.ones(2)) / 3) )
+        A = spar.csr_matrix(((np.eye(2) + np.ones(2)) / 3))
         # A = (np.eye(2) + np.ones((2,2))) / 3
-        
+
         F_exact = np.ones((2, 2)) * 0.5
         F_calculated, steps = kn.smooth_matrix_with_rwr(F0, A, run_parameters)
         self.assertEqual(steps, EXPECTED_STEPS)
-        
+
         T = (np.abs(F_exact - F_calculated))
-        
+
         self.assertAlmostEqual(T.sum(), 0)
-        
+
     def test_smooth_matrix_with_rwr_non_sparse(self):
         """ Assert that a test matrix will converge to the precomputed answer in
             the predicted number of steps (iterations). Depends on run_parameters
@@ -68,17 +131,17 @@ class test_clustering_functions(unittest.TestCase):
         run_parameters['restart_probability'] = 1
         run_parameters['restart_tolerance'] = 1e-12
         F0 = np.eye(2)
-        #A = spar.csr_matrix(( (np.eye(2) + np.ones(2)) / 3) )
-        A = (np.eye(2) + np.ones((2,2))) / 3
-        
+        # A = spar.csr_matrix(( (np.eye(2) + np.ones(2)) / 3) )
+        A = (np.eye(2) + np.ones((2, 2))) / 3
+
         F_exact = np.ones((2, 2)) * 0.5
         F_calculated, steps = kn.smooth_matrix_with_rwr(F0, A, run_parameters)
         self.assertEqual(steps, EXPECTED_STEPS)
-        
+
         T = (np.abs(F_exact - F_calculated))
-        
+
         self.assertAlmostEqual(T.sum(), 0)
-        
+
     def test_smooth_matrix_with_rwr_single_vector(self):
         """ Assert that a test matrix will converge to the precomputed answer in
             the predicted number of steps (iterations). Depends on run_parameters
@@ -89,35 +152,35 @@ class test_clustering_functions(unittest.TestCase):
         run_parameters['restart_probability'] = 1
         run_parameters['restart_tolerance'] = 1e-12
         F0 = np.array([1.0, 0.0])
-        #A = spar.csr_matrix(( (np.eye(2) + np.ones(2)) / 3) )
-        A = (np.eye(2) + np.ones((2,2))) / 3
-        
+        # A = spar.csr_matrix(( (np.eye(2) + np.ones(2)) / 3) )
+        A = (np.eye(2) + np.ones((2, 2))) / 3
+
         F_exact = np.array([0.5, 0.5])
         F_calculated, steps = kn.smooth_matrix_with_rwr(F0, A, run_parameters)
         self.assertEqual(steps, EXPECTED_STEPS, msg='minor difference')
         T = (np.abs(F_exact - F_calculated))
         self.assertAlmostEqual(T.sum(), 0)
-        
+
     def test_normalize_sparse_mat_by_diagonal(self):
         """ assert that a test matrix will be "normalized" s.t. the sum of the rows
             or columns will nearly equal one
         """
-        A = np.random.rand(500,500)
+        A = np.random.rand(500, 500)
         B = kn.normalize_sparse_mat_by_diagonal(spar.csr_matrix(A))
         B = B.todense()
-        B2 = B**2
+        B2 = B ** 2
         B2 = np.sqrt(B2.sum())
         geo_mean = float(stats.gmean(B.sum(axis=1)))
         self.assertAlmostEqual(geo_mean, 1, delta=0.1)
         geo_mean = float(stats.gmean(B.T.sum(axis=1)))
         self.assertAlmostEqual(geo_mean, 1, delta=0.1)
-        
+
     def test_form_network_laplacian_matrix(self):
         """ assert that the laplacian matrix returned sums to zero in both rows
             and columns
         """
         THRESHOLD = 0.8
-        A  = np.random.rand(10,10)
+        A = np.random.rand(10, 10)
         A[A < THRESHOLD] = 0
         A = A + A.T
         Ld, Lk = kn.form_network_laplacian_matrix(A)
@@ -134,10 +197,10 @@ class test_clustering_functions(unittest.TestCase):
         self.assertFalse(L0.any(), msg='Laplacian row sum not equal 0')
         L1 = L.sum(axis=1)
         self.assertFalse(L1.any(), msg='Laplacian col sum not equal 0')
-        
+
     def test_sample_a_matrix(self):
         """ assert that the random sample is of the propper size, the
-            permutation points to the correct columns and that the number of 
+            permutation points to the correct columns and that the number of
             rows set to zero is correct.
         """
         n_test_rows = 11
@@ -162,7 +225,7 @@ class test_clustering_functions(unittest.TestCase):
             B_col += 1
             if C.sum() > epsilon_sum:
                 perm_err_sum += 1
-        
+
         self.assertEqual(n_zero_err_sum, 0, msg='number of zero columns exception')
         self.assertEqual(perm_err_sum, 0, msg='permutation index exception')
 
@@ -175,7 +238,7 @@ class test_clustering_functions(unittest.TestCase):
         dir_path = run_parameters['test_directory']
         ndr = kn.create_dir(dir_path, dir_name)
         self.assertTrue(os.path.exists(ndr), msg='create_dir function exception')
-        A = np.random.rand(10,10)
+        A = np.random.rand(10, 10)
         time_stamp = '123456789'
         a_name = os.path.join(ndr, 'temp_test' + time_stamp)
         A.dump(a_name)
@@ -185,7 +248,7 @@ class test_clustering_functions(unittest.TestCase):
         self.assertEqual(A_diff, 0, msg='write / read directory exception')
         kn.remove_dir(ndr)
         self.assertFalse(os.path.exists(ndr), msg='remove_dir function exception')
-        
+
     def test_get_timestamp(self):
         """ assert that the default size of the timestamp string is 16 chars and
             that sequential calls produce differnt results
@@ -194,12 +257,12 @@ class test_clustering_functions(unittest.TestCase):
         stamp_time = 1e6
         tstr = kn.get_timestamp(stamp_time)
         tstr2 = kn.get_timestamp()
-        
+
         self.assertEqual(len(tstr), n_default_chars, msg='string return size unexpected')
         self.assertNotEqual(tstr, tstr2)
-        
+
     def test_create_timestamped_filename(self):
-        """ assert that the beginning char string remains unchanged and that the 
+        """ assert that the beginning char string remains unchanged and that the
             size of the returned string is as expected
         """
         n_default_chars = 27
@@ -207,7 +270,7 @@ class test_clustering_functions(unittest.TestCase):
         tsfn = kn.create_timestamped_filename(name_base)
         self.assertEqual(name_base, tsfn[0:10], msg='prefix name exception')
         self.assertEqual(len(tsfn), n_default_chars, msg='filename size exception')
-       
+
     def test_append_run_parameters_dict(self):
         """ assert that key value pairs are inserted and are retrevable from the run
             parameters dictionary
@@ -215,10 +278,10 @@ class test_clustering_functions(unittest.TestCase):
         run_parameters = self.get_run_parameters()
         run_parameters = kn.append_run_parameters_dict(run_parameters, 'pi_test', np.pi)
         run_parameters = kn.append_run_parameters_dict(run_parameters, 'tea_test', 'tea')
-        
+
         self.assertEqual(run_parameters['pi_test'], np.pi, msg='float value exception')
         self.assertEqual(run_parameters['tea_test'], 'tea', msg='string value exception')
-        
+
     def test_update_indicator_matrix(self):
         """ assert that the indicator matrix is not loosing any digits
             Note: correctness test considered as part of linkage matrix test
@@ -229,13 +292,13 @@ class test_clustering_functions(unittest.TestCase):
         A = np.zeros((n_test_rows, n_test_rows))
         running_sum = 0
         for r in range(0, n_repeats):
-            running_sum += n_test_perm**2
+            running_sum += n_test_perm ** 2
             f_perm = np.random.permutation(n_test_rows)
             f_perm = f_perm[0:n_test_perm]
             A = kn.update_indicator_matrix(f_perm, A)
-            
+
         self.assertEqual(A.sum(), running_sum, msg='sum of elements exception')
-        
+
     def test_update_linkage_matrix(self):
         """ create a consensus matrix by sampling a synthesized set of clusters
             assert that the clustering is equivalent
@@ -258,18 +321,59 @@ class test_clustering_functions(unittest.TestCase):
             cluster_p = cluster_set[f_perm]
             I = kn.update_indicator_matrix(f_perm, I)
             M = kn.update_linkage_matrix(cluster_p, f_perm, M)
-    
+
         CC = M / np.maximum(I, 1e-15)
 
-        for s in range(0,n_clusters):
+        for s in range(0, n_clusters):
             s_dex = cluster_set == s
             c_c = CC[s_dex, :]
             c_c = c_c[:, s_dex]
             n_check = c_c - 1
             self.assertEqual(n_check.sum(), 0, msg='cluster grouping exception')
-            
-        #label_set = kn.perform_kmeans(CC, n_clusters)
-    
+
+            # label_set = kn.perform_kmeans(CC, n_clusters)
+
+    def test_perform_kmeans(self):
+        """ assert that the kmeans sets of a known cluster as consensus matrix is the
+            same as the known cluster
+        """
+        n_samples = 11
+        n_clusters = 3
+        cluster_set = np.int_(np.ones(n_samples))
+        for r in range(0, n_samples):
+            cluster_set[r] = int(np.random.randint(n_clusters))
+
+        n_repeats = 33
+        n_test_perm = 5
+        n_test_rows = n_samples
+        I = np.zeros((n_test_rows, n_test_rows))
+        M = np.zeros((n_test_rows, n_test_rows))
+
+        for r in range(0, n_repeats):
+            f_perm = np.random.permutation(n_test_rows)
+            f_perm = f_perm[0:n_test_perm]
+            cluster_p = cluster_set[f_perm]
+            I = kn.update_indicator_matrix(f_perm, I)
+            M = kn.update_linkage_matrix(cluster_p, f_perm, M)
+
+        CC = M / np.maximum(I, 1e-15)
+
+        label_set = kn.perform_kmeans(CC, n_clusters)
+
+        self.assertTrue(sets_a_eq_b(cluster_set, label_set), msg='kemans sets differ from cluster')
+
+    def test_update_h_coordinate_matrix(self):
+        # epsi_lo = 1e15
+        k = 3
+        rows = 25
+        cols = 6
+        W = np.random.rand(rows, k)
+        H = np.random.rand(k, cols)
+        X = W.dot(H)
+        hwx = kn.update_h_coordinate_matrix(W, X)
+        dh = (np.abs(H - hwx)).sum()
+        self.assertAlmostEqual(dh, 0, msg='h matrix mangled exception')
+
     """
 def perform_kmeans(consensus_matrix, k=3):
     determine cluster assignments for consensus matrix using K-means.
@@ -284,59 +388,8 @@ def perform_kmeans(consensus_matrix, k=3):
     cluster_handle = KMeans(k, random_state=10)
     labels = cluster_handle.fit_predict(consensus_matrix)
 
-    return labels    
-    
-def update_h_coordinate_matrix(w_matrix, x_matrix):
-    nonnegative right factor matrix for perform_net_nmf function s.t. X ~ W.H.
+    return labels
 
-    Args:
-        w_matrix: the positive left factor (W) of the perform_net_nmf function.
-        x_matrix: the postive matrix (X) to be decomposed.
-
-    Returns:
-        h_matrix: nonnegative right factor (H) matrix.
-
-    wtw = np.dot(w_matrix.T, w_matrix)
-    number_of_clusters = wtw.shape[0]
-    wtx = np.dot(w_matrix.T, x_matrix)
-    colix = np.arange(0, x_matrix.shape[1])
-    rowix = np.arange(0, w_matrix.shape[1])
-    h_matrix = np.dot(LA.pinv(wtw), wtx)
-    h_pos = h_matrix > 0
-    h_matrix[~h_pos] = 0
-    col_log_arr = sum(h_pos == 0) > 0
-    col_list = colix[col_log_arr]
-    for cluster in range(0, number_of_clusters):
-        if col_list.size > 0:
-            w_ette = wtx[:, col_list]
-            m_rows = w_ette.shape[0]
-            n_cols = w_ette.shape[1]
-            mcode_uniq_col_ix = np.arange(0, n_cols)
-            h_ette = np.zeros((m_rows, n_cols))
-            h_pos_ette = h_pos[:, col_list]
-            mcoding = np.dot(2**(np.arange(0, m_rows)), np.int_(h_pos_ette))
-            mcode_uniq = np.unique(mcoding)
-            for u_n in mcode_uniq:
-                ixidx = mcoding == u_n
-                c_pat = mcode_uniq_col_ix[ixidx]
-                if c_pat.size > 0:
-                    r_pat = rowix[h_pos_ette[:, c_pat[0]]]
-                    atmp = wtw[r_pat[:, None], r_pat]
-                    btmp = w_ette[r_pat[:, None], c_pat]
-                    atmptatmp = np.dot(atmp.T, atmp)
-                    atmptatmp = LA.pinv(atmptatmp)
-                    atmptbtmp = np.dot(atmp.T, btmp)
-                    h_ette[r_pat[:, None], c_pat] = np.dot(atmptatmp, atmptbtmp)
-                    h_matrix[:, col_list] = h_ette
-            h_pos = h_matrix > 0
-            h_matrix[~h_pos] = 0
-            col_log_arr = sum(h_pos == 0) > 0
-            col_list = colix[col_log_arr]
-        else:
-            break
-
-    return h_matrix
-    
 def perform_net_nmf(x_matrix, lap_val, lap_dag, run_parameters):
     perform network based nonnegative matrix factorization, minimize:
         ||X-WH|| + lambda.tr(W'.L.W), with W, H positive.
@@ -417,13 +470,14 @@ def perform_nmf(x_matrix, run_parameters):
 
     return h_matrix
     """
-        
+
 
 def suite():
     test_suite = unittest.TestSuite()
-    test_suite.addTest(unittest.makeSuite(test_clustering_functions))
-    
+    test_suite.addTest(unittest.makeSuite(toolbox_test))
+
     return test_suite
+
 
 '''# Next two lines for using this file w/o test Suite   << NOT recommended
 #if __name__=='__main__':
