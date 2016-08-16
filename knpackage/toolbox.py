@@ -158,8 +158,6 @@ def find_dropped_node_names(spreadsheet_df, unique_gene_names):
     Args:
         spreadsheet_df: the full spreadsheet data frame before dropping.
         unique_gene_names: the genes that will be used in calculation.
-        run_parameters: dictionary of parameters.
-        file_name: droped genes list file name.
     """
     droplist = spreadsheet_df.loc[~spreadsheet_df.index.isin(unique_gene_names)]
     droplist = droplist.index.values
