@@ -1,6 +1,7 @@
 import unittest
 import pandas as pd
 import knpackage.toolbox as knpkg
+import xmlrunner
 
 class TestExtract_network_node_names(unittest.TestCase):
     def setUp(self):
@@ -34,7 +35,8 @@ class TestExtract_network_node_names(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(testRunner = xmlrunner.XMLTestRunner(output='test_reports'),
+                                                        failfast=False, buffer=False, catchbreak=False)
 
 
 

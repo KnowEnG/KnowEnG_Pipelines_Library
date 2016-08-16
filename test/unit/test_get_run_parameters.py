@@ -3,7 +3,7 @@ import os
 import shutil
 import yaml
 import knpackage.toolbox as knpkg
-
+import xmlrunner
 
 class TestGet_run_parameters(unittest.TestCase):
     def setUp(self):
@@ -39,6 +39,7 @@ class TestGet_run_parameters(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(testRunner = xmlrunner.XMLTestRunner(output='test_reports'),
+                                                        failfast=False, buffer=False, catchbreak=False)
 
 

@@ -4,7 +4,7 @@ import knpackage.toolbox as knpkg
 import shutil
 import numpy.testing as npytest
 import pandas as pd
-
+import xmlrunner
 class TestGet_network_df(unittest.TestCase):
     def setUp(self):
         self.network_file = "final_clean_4col.edge"
@@ -37,5 +37,6 @@ class TestGet_network_df(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(testRunner = xmlrunner.XMLTestRunner(output='test_reports'),
+                                                        failfast=False, buffer=False, catchbreak=False)
 
