@@ -14,6 +14,7 @@ from numpy import maximum
 
 import pandas as pd
 import scipy.sparse as spar
+from scipy.sparse import csgraph
 from sklearn.cluster import KMeans
 
 import yaml
@@ -392,26 +393,22 @@ def normalize_sparse_mat_by_diagonal(network_mat):
     return network_mat
 
 def form_network_laplacian_matrix(network_mat):
-    """ Laplacian matrix components for use in network based stratification.
+    """ get the laplacian matrix components needed by net nmf
 
     Args:
-        network_mat: symmetric matrix.
+        network_mat: sparse symmetric matrix
 
     Returns:
-        diagonal_laplacian: diagonal of the laplacian matrix.
-        laplacian: locations in the laplacian matrix.
+        diag_laplacian: The diagonal component of the Laplacian matrix
+        locs_laplacian: The values component of the Laplacian. L = D - V
     """
-    laplacian = spar.lil_matrix(network_mat.copy())
-    laplacian.setdiag(0)
-    laplacian[laplacian != 0] = 1
-    diag_length = laplacian.shape[0]
-    rowsum = np.array(laplacian.sum(axis=0))
-    diag_arr = np.arange(0, diag_length)
-    diagonal_laplacian = spar.csr_matrix((rowsum[0, :], (diag_arr, diag_arr)),
-                                         shape=(network_mat.shape))
-    laplacian = laplacian.tocsr()
+    n_mat = network_mat.copy()
+    n_mat[n_mat != 0] = 1
+    locs_laplacian, diag_laplacian = csgraph.laplacian(n_mat, normed=False, return_diag=True)
+    diag_laplacian = spar.diags(diag_laplacian)
+    locs_laplacian = spar.csr_matrix(diag_laplacian - locs_laplacian)
 
-    return diagonal_laplacian, laplacian
+    return diag_laplacian, locs_laplacian
 
 def sample_a_matrix(spreadsheet_mat, percent_sample):
     """ percent_sample x percent_sample random sample, from spreadsheet_mat.
