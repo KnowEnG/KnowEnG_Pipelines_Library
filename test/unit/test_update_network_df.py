@@ -20,7 +20,7 @@ class TestUpdate_network_df(TestCase):
     def test_update_network_df(self):
         ret = kn.update_network_df(
               self.network, self.nodes_list, self.node_id)
-        self.assertEquals(True, ret.equals(self.network_result),
+        self.assertEqual(True, ret.equals(self.network_result),
                          'test_update_network_df failed')
 
 if __name__ == '__main__':
