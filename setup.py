@@ -10,7 +10,13 @@ with open(path.join(cur_dir, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='knpackage',
-    version=vcversioner.find_version().version,
+    version='0.1.2',
+    #version=vcversioner.find_version().version,
+    #setup_requires=['vcversioner'],
+    #vcversioner={
+    #    'vcs_args': ['git', 'describe', '--long'],
+    #},
+    include_dev_version=True,
     description='KnowEng toolbox',
     long_description=long_description,
     url='https://github.com/KnowEnG-Research/KnowEnG_Pipelines_Library',

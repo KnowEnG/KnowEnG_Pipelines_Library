@@ -77,7 +77,7 @@ def sets_a_eq_b(a, b):
 
 class toolbox_test(unittest.TestCase):
     def get_run_parameters(self):
-        run_parameters = {'test_directory': '/Users/del/AllCodeBigData/KnowEnG_tbx_test/testTank',
+        run_parameters = {'test_directory': '/Users/lanier4/BigDataTank/nbs_run',
                           'k': 3, 'number_of_iteriations_in_rwr': 100,
                           'obj_fcn_chk_freq': 50,
                           'it_max': 10000,
@@ -243,6 +243,8 @@ class toolbox_test(unittest.TestCase):
         a_name = os.path.join(ndr, 'temp_test' + time_stamp)
         A.dump(a_name)
         A_back = np.load(a_name)
+        if os.path.isfile(a_name):
+            os.remove(a_name)
         A_diff = A - A_back
         A_diff = A_diff.sum()
         self.assertEqual(A_diff, 0, msg='write / read directory exception')
