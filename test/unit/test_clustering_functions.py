@@ -241,7 +241,8 @@ class toolbox_test(unittest.TestCase):
         A = np.random.rand(10, 10)
         time_stamp = '123456789'
         a_name = os.path.join(ndr, 'temp_test' + time_stamp)
-        A.dump(a_name)
+        with open(a_name, 'wb') as fh:
+            A.dump(fh)
         A_back = np.load(a_name)
         if os.path.isfile(a_name):
             os.remove(a_name)
@@ -377,21 +378,6 @@ class toolbox_test(unittest.TestCase):
         self.assertAlmostEqual(dh, 0, msg='h matrix mangled exception')
 
     """
-def perform_kmeans(consensus_matrix, k=3):
-    determine cluster assignments for consensus matrix using K-means.
-
-    Args:
-        consensus_matrix: connectivity / indicator matrix.
-        k: clusters estimate.
-
-    Returns:
-        lablels: ordered cluster assignments for consensus_matrix (samples).
-
-    cluster_handle = KMeans(k, random_state=10)
-    labels = cluster_handle.fit_predict(consensus_matrix)
-
-    return labels
-
 def perform_net_nmf(x_matrix, lap_val, lap_dag, run_parameters):
     perform network based nonnegative matrix factorization, minimize:
         ||X-WH|| + lambda.tr(W'.L.W), with W, H positive.
