@@ -434,8 +434,8 @@ class toolbox_test(unittest.TestCase):
             rowdex = C == row
             H[row, rowdex] = 1
 
-        pct_dim = 0.63
-        n_nodes = np.int_(np.round(pct_dim * nrows ** 2))
+        pct_nodes = 0.1
+        n_nodes = np.int_(np.round(pct_nodes * nrows ** 2))
         N = synthesize_random_network(nrows, n_nodes)
 
         W = np.random.rand(nrows, k)
