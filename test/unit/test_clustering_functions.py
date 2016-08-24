@@ -28,8 +28,9 @@ def get_cluster_indices_list(a_arr):
     for v in a_arr_unique:
         tmp_list.append(idx_arr[a_arr == v])
 
-    first_member_array = np.int_(np.zeros(len(tmp_list)))
-    for m in range(0, first_member_array.size):
+    len_tmp_list = len(tmp_list)
+    first_member_array = np.int_(np.zeros(len_tmp_list))
+    for m in range(0, len_tmp_list):
         tmp = tmp_list[m]
         first_member_array[m] = int(tmp[0])
 
@@ -42,17 +43,14 @@ def get_cluster_indices_list(a_arr):
 
 
 def sets_a_eq_b(a, b):
-    """ true or false: the equal integer value sets in array a
-        are the same indeces as the equal value sets in array b
-
+    """ check that all indices of equal values in a
+        are same sets as indices of equal values in b
     Args:
-        a: integer array
-        b: anothe integer array
-
+        a: array of cluster assignments
+        b: array of cluster assignments - same size or will return false
     Returns:
-        True if both arrays are the same size and the indices of
-            their values are the same
-            otherwise returns False
+        True or False: array a indices of equal value
+            are the same as array b indices of equal values
     """
     a_u = np.unique(a)
     b_u = np.unique(b)
@@ -77,8 +75,9 @@ def sets_a_eq_b(a, b):
 
 class toolbox_test(unittest.TestCase):
     def get_run_parameters(self):
-        run_parameters = {'test_directory': '/Users/lanier4/BigDataTank/nbs_run',
-                          'k': 3, 'number_of_iteriations_in_rwr': 100,
+        run_parameters = {'test_directory': '/Users/del/AllCodeBigData/KnowEnG_tbx_test',
+                          'k': 3,
+                          'number_of_iteriations_in_rwr': 100,
                           'obj_fcn_chk_freq': 50,
                           'it_max': 10000,
                           'h_clust_eq_limit': 100,
@@ -376,6 +375,34 @@ class toolbox_test(unittest.TestCase):
         hwx = kn.update_h_coordinate_matrix(W, X)
         dh = (np.abs(H - hwx)).sum()
         self.assertAlmostEqual(dh, 0, msg='h matrix mangled exception')
+
+    def test_perform_nmf(self):
+        run_parameters = self.get_run_parameters()
+
+        k = run_parameters['k']
+
+        nrows = 90
+        ncols = 30
+        W = np.random.rand(nrows, k)
+        H0 = np.random.rand(k, ncols)
+        C = np.argmax(H0, axis=0)
+        H = np.zeros(H0.shape)
+        for row in range(0, max(C) + 1):
+            rowdex = C == row
+            H[row, rowdex] = 1
+
+        X = W.dot(H)
+
+        H_b = kn.perform_nmf(X, run_parameters)
+
+        H_clusters = np.argmax(H, axis=0)
+        H_sets = get_cluster_indices_list(H_clusters)
+        H_b_clusters = np.argmax(H_b, axis=0)
+        H_b_sets = get_cluster_indices_list(H_b_clusters)
+
+        sets_R_equal = sets_a_eq_b(H_clusters, H_b_clusters)
+        self.assertTrue(sets_R_equal, msg='test nmf clusters differ')
+
 
     """
 def perform_net_nmf(x_matrix, lap_val, lap_dag, run_parameters):
