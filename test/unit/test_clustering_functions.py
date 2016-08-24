@@ -30,6 +30,7 @@ def synthesize_random_network(network_dim, n_nodes):
 
     return network
 
+
 def get_cluster_indices_list(a_arr):
     """ get the list of sets of positive integers in the input array where a set
         is the index of where equal values occur for all equal values in the array
@@ -450,50 +451,6 @@ class toolbox_test(unittest.TestCase):
 
         sets_R_equal = sets_a_eq_b(H_clusters, H_b_clusters)
         self.assertTrue(sets_R_equal, msg='test net nmf clusters differ')
-        
-    """
-def perform_net_nmf(x_matrix, lap_val, lap_dag, run_parameters):
-    perform network based nonnegative matrix factorization, minimize:
-        ||X-WH|| + lambda.tr(W'.L.W), with W, H positive.
-
-    Args:
-        x_matrix: the postive matrix (X) to be decomposed into W.H
-        lap_val: the laplacian matrix
-        lap_dag: the diagonal of the laplacian matrix
-        run_parameters: parameters dictionary with keys: "k", "lambda", "it_max",
-            "h_clust_eq_limit", "obj_fcn_chk_freq".
-
-    Returns:
-        h_matrix: nonnegative right factor (H) matrix.
-
-    k = int(run_parameters["k"])
-    lmbda = float(run_parameters["lmbda"])
-    epsilon = 1e-15
-    w_matrix = np.random.rand(x_matrix.shape[0], k)
-    w_matrix = maximum(w_matrix / maximum(sum(w_matrix), epsilon), epsilon)
-    h_matrix = np.random.rand(k, x_matrix.shape[1])
-    h_clust_eq = np.argmax(h_matrix, 0)
-    h_eq_count = 0
-    for itr in range(0, int(run_parameters["it_max"])):
-        if np.mod(itr, int(run_parameters["obj_fcn_chk_freq"])) == 0:
-            h_clusters = np.argmax(h_matrix, 0)
-            if (itr > 0) & (sum(h_clust_eq != h_clusters) == 0):
-                h_eq_count = h_eq_count + int(run_parameters["obj_fcn_chk_freq"])
-            else:
-                h_eq_count = 0
-            h_clust_eq = h_clusters
-            if h_eq_count >= float(run_parameters["h_clust_eq_limit"]):
-                break
-        numerator = maximum(np.dot(x_matrix, h_matrix.T) + lmbda * lap_val.dot(w_matrix), epsilon)
-        denomerator = maximum(np.dot(w_matrix, np.dot(h_matrix, h_matrix.T))
-                              + lmbda * lap_dag.dot(w_matrix), epsilon)
-        w_matrix = w_matrix * (numerator / denomerator)
-        w_matrix = maximum(w_matrix / maximum(sum(w_matrix), epsilon), epsilon)
-        h_matrix = update_h_coordinate_matrix(w_matrix, x_matrix)
-
-    return h_matrix
-    """
-
 
 def suite():
     test_suite = unittest.TestSuite()
@@ -506,14 +463,14 @@ def suite():
 #if __name__=='__main__':
 #    unittest.main()
 
-                                        >> Preferred Method for using unit test
+                                        >> formal preferred method for using unit test.
 import unittest
 import TestKEGmodule as tkeg
 mySuit = tkn.suite()
 runner = unittest.TextTestRunner()
 myResult = runner.run(mySuit)
 
-OR
+                                        >> OR... One liner: shorter method.
 mySuit2 = unittest.TestLoader().loadTestsFromTestCase(TestKEGmodule)
 
-'''    
+'''
