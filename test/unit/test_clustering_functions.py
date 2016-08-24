@@ -11,6 +11,25 @@ import scipy.stats as stats
 import knpackage.toolbox as kn
 
 
+def synthesize_random_network(network_dim, n_nodes):
+    """ symmetric random adjacency matrix from random set of nodes
+    Args:
+        network_dim: number of rows and columns in the symmetric output matrix
+        n_nodes: number of connections (approximate because duplicates are ignored)
+    Returns:
+        network: a symmetric adjacency matrix (0 or 1 in network_dim x network_dim matrix)
+    """
+    network = np.zeros((network_dim, network_dim))
+    col_0 = np.random.randint(0, network_dim, n_nodes)
+    col_1 = np.random.randint(0, network_dim, n_nodes)
+    for node in range(0, n_nodes):
+        if col_0[node] != col_1[node]:
+            network[col_0[node], col_1[node]] = 1
+    network = network + network.T
+    network[network != 0] = 1
+
+    return network
+
 def get_cluster_indices_list(a_arr):
     """ get the list of sets of positive integers in the input array where a set
         is the index of where equal values occur for all equal values in the array
@@ -377,13 +396,12 @@ class toolbox_test(unittest.TestCase):
         self.assertAlmostEqual(dh, 0, msg='h matrix mangled exception')
 
     def test_perform_nmf(self):
+        # assert that nmf finds the same clusters as a known cluster set
         run_parameters = self.get_run_parameters()
-
         k = run_parameters['k']
-
         nrows = 90
         ncols = 30
-        W = np.random.rand(nrows, k)
+
         H0 = np.random.rand(k, ncols)
         C = np.argmax(H0, axis=0)
         H = np.zeros(H0.shape)
@@ -391,19 +409,48 @@ class toolbox_test(unittest.TestCase):
             rowdex = C == row
             H[row, rowdex] = 1
 
+        W = np.random.rand(nrows, k)
         X = W.dot(H)
 
         H_b = kn.perform_nmf(X, run_parameters)
-
         H_clusters = np.argmax(H, axis=0)
-        H_sets = get_cluster_indices_list(H_clusters)
         H_b_clusters = np.argmax(H_b, axis=0)
-        H_b_sets = get_cluster_indices_list(H_b_clusters)
 
         sets_R_equal = sets_a_eq_b(H_clusters, H_b_clusters)
         self.assertTrue(sets_R_equal, msg='test nmf clusters differ')
 
+    def test_perform_net_nmf(self):
+        # assert that net_nmf finds the same clusters as a known cluster set
+        # with a basis made from the network
+        run_parameters = self.get_run_parameters()
+        k = run_parameters['k']
+        nrows = 90
+        ncols = 30
+        H0 = np.random.rand(k, ncols)
+        C = np.argmax(H0, axis=0)
+        H = np.zeros(H0.shape)
+        for row in range(0, max(C) + 1):
+            rowdex = C == row
+            H[row, rowdex] = 1
 
+        pct_dim = 0.63
+        n_nodes = np.int_(np.round(pct_dim * nrows ** 2))
+        N = synthesize_random_network(nrows, n_nodes)
+
+        W = np.random.rand(nrows, k)
+        W = N.dot(W)
+
+        X = W.dot(H)
+
+        lap_dag, lap_val = kn.form_network_laplacian_matrix(N)
+        H_b = kn.perform_net_nmf(X, lap_val, lap_dag, run_parameters)
+
+        H_clusters = np.argmax(H, axis=0)
+        H_b_clusters = np.argmax(H_b, axis=0)
+
+        sets_R_equal = sets_a_eq_b(H_clusters, H_b_clusters)
+        self.assertTrue(sets_R_equal, msg='test net nmf clusters differ')
+        
     """
 def perform_net_nmf(x_matrix, lap_val, lap_dag, run_parameters):
     perform network based nonnegative matrix factorization, minimize:
@@ -440,45 +487,6 @@ def perform_net_nmf(x_matrix, lap_val, lap_dag, run_parameters):
         numerator = maximum(np.dot(x_matrix, h_matrix.T) + lmbda * lap_val.dot(w_matrix), epsilon)
         denomerator = maximum(np.dot(w_matrix, np.dot(h_matrix, h_matrix.T))
                               + lmbda * lap_dag.dot(w_matrix), epsilon)
-        w_matrix = w_matrix * (numerator / denomerator)
-        w_matrix = maximum(w_matrix / maximum(sum(w_matrix), epsilon), epsilon)
-        h_matrix = update_h_coordinate_matrix(w_matrix, x_matrix)
-
-    return h_matrix
-
-def perform_nmf(x_matrix, run_parameters):
-    nonnegative matrix factorization, minimize the diffence between X and W dot H
-        with positive factor matrices W, and H.
-
-    Args:
-        x_matrix: the postive matrix (X) to be decomposed into W dot H.
-        run_parameters: parameters dictionary with keys "k", "it_max",
-            "cluster_min_repeats", "obj_fcn_chk_freq".
-
-    Returns:
-        h_matrix: nonnegative right factor matrix (H).
-
-    k = int(run_parameters["k"])
-    obj_fcn_chk_freq = int(run_parameters["obj_fcn_chk_freq"])
-    h_clust_eq_limit = float(run_parameters["h_clust_eq_limit"])
-    epsilon = 1e-15
-    w_matrix = np.random.rand(x_matrix.shape[0], k)
-    w_matrix = maximum(w_matrix / maximum(sum(w_matrix), epsilon), epsilon)
-    h_matrix = np.random.rand(k, x_matrix.shape[1])
-    h_clust_eq = np.argmax(h_matrix, 0)
-    h_eq_count = 0
-    for itr in range(0, int(run_parameters["it_max"])):
-        if np.mod(itr, obj_fcn_chk_freq) == 0:
-            h_clusters = np.argmax(h_matrix, 0)
-            if (itr > 0) & (sum(h_clust_eq != h_clusters) == 0):
-                h_eq_count = h_eq_count + obj_fcn_chk_freq
-            else:
-                h_eq_count = 0
-            h_clust_eq = h_clusters
-            if h_eq_count >= h_clust_eq_limit:
-                break
-        numerator = maximum(np.dot(x_matrix, h_matrix.T), epsilon)
-        denomerator = maximum(np.dot(w_matrix, np.dot(h_matrix, h_matrix.T)), epsilon)
         w_matrix = w_matrix * (numerator / denomerator)
         w_matrix = maximum(w_matrix / maximum(sum(w_matrix), epsilon), epsilon)
         h_matrix = update_h_coordinate_matrix(w_matrix, x_matrix)
