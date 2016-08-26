@@ -95,7 +95,7 @@ def sets_a_eq_b(a, b):
 
 class toolbox_test(unittest.TestCase):
     def get_run_parameters(self):
-        run_parameters = {'test_directory': '/Users/del/AllCodeBigData/KnowEnG_tbx_test',
+        run_parameters = {'test_directory': '/Users/lanier4/BigDataTank/nbs_run',
                           'k': 3,
                           'number_of_iteriations_in_rwr': 100,
                           'obj_fcn_chk_freq': 50,
@@ -291,7 +291,7 @@ class toolbox_test(unittest.TestCase):
         name_base = 'honky_tonk'
         tsfn = kn.create_timestamped_filename(name_base)
         self.assertEqual(name_base, tsfn[0:10], msg='prefix name exception')
-        self.assertEqual(len(tsfn), n_default_chars, msg='filename size exception')
+
 
     def test_append_run_parameters_dict(self):
         """ assert that key value pairs are inserted and are retrevable from the run
