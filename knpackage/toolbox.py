@@ -56,19 +56,20 @@ def get_run_parameters(run_directory, run_file):
     return run_parameters
 
 
-def get_spreadsheet_df(run_parameters):
+def get_spreadsheet_df(spreadsheet_name_full_path):
     """ get the spreadsheet file name from the run_parameters dictionary and
         read the file into a pandas dataframe.
 
     Args:
-        run_parameters: python dictionary with 'samples_file_name' key.
+        spreadsheet_name_full_path: full path name of a tab separated values spreadsheet
+            with row and column names
 
     Returns:
         spreadsheet_df: the spreadsheet dataframe.
     """
 
     spreadsheet_df = pd.read_csv(
-        run_parameters['samples_file_name'], sep='\t', header=0, index_col=0)
+        spreadsheet_name_full_path, sep='\t', header=0, index_col=0)
 
     return spreadsheet_df
 
