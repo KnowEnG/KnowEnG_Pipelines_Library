@@ -331,7 +331,7 @@ class toolbox_test(unittest.TestCase):
         for r in range(0, n_samples):
             cluster_set[r] = int(np.random.randint(n_clusters))
 
-        n_repeats = 33
+        n_repeats = 100
         n_test_perm = 5
         n_test_rows = n_samples
         I = np.zeros((n_test_rows, n_test_rows))
