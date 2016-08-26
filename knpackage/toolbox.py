@@ -687,7 +687,8 @@ def create_timestamped_filename(name_base, name_extension=None, precision=None, 
     Args:
         name_base: file name first part - may include directory path.
         name_extension: file extension without a period.
-        run_parameters: run_parameters['use_now_name'] (between 1 and 1,000,000)
+        precision: None or a multiplier to move the decimal point in seconds
+        n_digits: (positive integer) number of decimal digits
 
     Returns:
         time_stamped_file_name: concatenation of time-stamp between name_base and name_extension.
@@ -697,10 +698,10 @@ def create_timestamped_filename(name_base, name_extension=None, precision=None, 
         t0 = time.time()
         t_dec = t0 - np.floor(t0)
         t_dec = '{}'.format(t_dec)
-        nstr = time.strftime("%a_%d_%b_%Y_%H_%M_%S", time.localtime()) + t_dec[1:max(1, n_digits)]
+        nstr = time.strftime("%a_%d_%b_%Y_%H_%M_%S", time.localtime()) + t_dec[1:max(1, n_digits+2)]
     else:
-        time_step = min(dt_min, precision)
-        nstr = np.str_(int(time.time() / time_step))
+        time_step = max(dt_min, precision)
+        nstr = np.str_(int(time.time() * time_step))
 
     if name_extension is None:
         time_stamped_file_name = name_base + '_' + nstr
