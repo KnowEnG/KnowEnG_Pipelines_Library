@@ -681,17 +681,31 @@ def get_timestamp(stamp_units=1e6):
 
     return timestamp_string
 
-def create_timestamped_filename(name_base='t', stamp_units=1e6):
-    """ append a filename with a timestamp string.
+def create_timestamped_filename(name_base, name_extension=None, precision=None, n_digits=9):
+    """ insert a time stamp into the filename_ before .extension.
 
     Args:
-        name_base: the file name - a prefix to the time stamp string.
-        stamp_units: time resolution; 1e6 for microseconds, 1e3 milliseconds.
+        name_base: file name first part - may include directory path.
+        name_extension: file extension without a period.
+        run_parameters: run_parameters['use_now_name'] (between 1 and 1,000,000)
 
     Returns:
-        time_stamped_file_name: name_base_123456 (some long number)
+        time_stamped_file_name: concatenation of time-stamp between name_base and name_extension.
     """
-    time_stamped_file_name = name_base + '_' + get_timestamp(stamp_units)
+    dt_min = 1
+    if precision is None:
+        t0 = time.time()
+        t_dec = t0 - np.floor(t0)
+        t_dec = '{}'.format(t_dec)
+        nstr = time.strftime("%a_%d_%b_%Y_%H_%M_%S", time.localtime()) + t_dec[1:max(1, n_digits)]
+    else:
+        time_step = min(dt_min, precision)
+        nstr = np.str_(int(time.time() / time_step))
+
+    if name_extension is None:
+        time_stamped_file_name = name_base + '_' + nstr
+    else:
+        time_stamped_file_name = name_base + '_' + nstr + '.' + name_extension
 
     return time_stamped_file_name
 
