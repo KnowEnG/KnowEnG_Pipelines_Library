@@ -411,7 +411,7 @@ def form_network_laplacian_matrix(network_mat):
 
     return diag_laplacian, locs_laplacian
 
-def sample_a_matrix(spreadsheet_mat, percent_sample):
+def sample_a_matrix(spreadsheet_mat, rows_fraction, cols_fraction):
     """ percent_sample x percent_sample random sample, from spreadsheet_mat.
 
     Args:
@@ -422,11 +422,11 @@ def sample_a_matrix(spreadsheet_mat, percent_sample):
         sample_random: A specified precentage sample of the spread sheet.
         sample_permutation: the array that correponds to columns sample.
     """
-    features_size = int(np.round(spreadsheet_mat.shape[0] * (1-percent_sample)))
+    features_size = int(np.round(spreadsheet_mat.shape[0] * (1-rows_fraction)))
     features_permutation = np.random.permutation(spreadsheet_mat.shape[0])
     features_permutation = features_permutation[0:features_size].T
 
-    patients_size = int(np.round(spreadsheet_mat.shape[1] * percent_sample))
+    patients_size = int(np.round(spreadsheet_mat.shape[1] * cols_fraction))
     sample_permutation = np.random.permutation(spreadsheet_mat.shape[1])
     sample_permutation = sample_permutation[0:patients_size]
 
@@ -445,18 +445,18 @@ def smooth_matrix_with_rwr(restart, network_sparse, run_parameters):
     Args:
         restart: restart array of any column size.
         network_sparse: network stored in sparse format.
-        run_parameters: parameters dictionary with "restart_probability",
-        "restart_tolerance", "number_of_iteriations_in_rwr".
+        run_parameters: parameters dictionary with "rwr_restart_probability",
+        "rwr_convergence_tolerence", "rwr_max_iterations".
 
     Returns:
         smooth_1: smoothed restart data.
         step: number of iterations (converged to tolerence or quit).
     """
-    tol = np.float_(run_parameters["restart_tolerance"])
-    alpha = np.float_(run_parameters["restart_probability"])
+    tol = np.float_(run_parameters["rwr_convergence_tolerence"])
+    alpha = np.float_(run_parameters["rwr_restart_probability"])
     smooth_0 = restart
     smooth_r = (1. - alpha) * restart
-    for step in range(0, int(run_parameters["number_of_iteriations_in_rwr"])):
+    for step in range(0, int(run_parameters["rwr_max_iterations"])):
         smooth_1 = alpha * network_sparse.dot(smooth_0) + smooth_r
         deltav = LA.norm(smooth_1 - smooth_0)
         if deltav < tol:
@@ -542,33 +542,33 @@ def perform_net_nmf(x_matrix, lap_val, lap_dag, run_parameters):
         x_matrix: the postive matrix (X) to be decomposed into W.H
         lap_val: the laplacian matrix
         lap_dag: the diagonal of the laplacian matrix
-        run_parameters: parameters dictionary with keys: "k", "lambda", "it_max",
-            "h_clust_eq_limit", "obj_fcn_chk_freq".
+        run_parameters: parameters dictionary with keys: "k", "lambda", "nmf_max_iterations",
+            "nmf_max_invariance", "nmf_conv_check_freq".
 
     Returns:
         h_matrix: nonnegative right factor (H) matrix.
     """
-    k = int(run_parameters["k"])
-    lmbda = float(run_parameters["lmbda"])
+    k = int(run_parameters["number_of_clusters"])
+    nmf_penalty_parameter = float(run_parameters["nmf_penalty_parameter"])
     epsilon = 1e-15
     w_matrix = np.random.rand(x_matrix.shape[0], k)
     w_matrix = maximum(w_matrix / maximum(sum(w_matrix), epsilon), epsilon)
     h_matrix = np.random.rand(k, x_matrix.shape[1])
     h_clust_eq = np.argmax(h_matrix, 0)
     h_eq_count = 0
-    for itr in range(0, int(run_parameters["it_max"])):
-        if np.mod(itr, int(run_parameters["obj_fcn_chk_freq"])) == 0:
+    for itr in range(0, int(run_parameters["nmf_max_iterations"])):
+        if np.mod(itr, int(run_parameters["nmf_conv_check_freq"])) == 0:
             h_clusters = np.argmax(h_matrix, 0)
             if (itr > 0) & (sum(h_clust_eq != h_clusters) == 0):
-                h_eq_count = h_eq_count + int(run_parameters["obj_fcn_chk_freq"])
+                h_eq_count = h_eq_count + int(run_parameters["nmf_conv_check_freq"])
             else:
                 h_eq_count = 0
             h_clust_eq = h_clusters
-            if h_eq_count >= float(run_parameters["h_clust_eq_limit"]):
+            if h_eq_count >= float(run_parameters["nmf_max_invariance"]):
                 break
-        numerator = maximum(np.dot(x_matrix, h_matrix.T) + lmbda * lap_val.dot(w_matrix), epsilon)
+        numerator = maximum(np.dot(x_matrix, h_matrix.T) + nmf_penalty_parameter * lap_val.dot(w_matrix), epsilon)
         denomerator = maximum(np.dot(w_matrix, np.dot(h_matrix, h_matrix.T))
-                              + lmbda * lap_dag.dot(w_matrix), epsilon)
+                              + nmf_penalty_parameter * lap_dag.dot(w_matrix), epsilon)
         w_matrix = w_matrix * (numerator / denomerator)
         w_matrix = maximum(w_matrix / maximum(sum(w_matrix), epsilon), epsilon)
         h_matrix = update_h_coordinate_matrix(w_matrix, x_matrix)
@@ -581,30 +581,30 @@ def perform_nmf(x_matrix, run_parameters):
 
     Args:
         x_matrix: the postive matrix (X) to be decomposed into W dot H.
-        run_parameters: parameters dictionary with keys "k", "it_max",
-            "cluster_min_repeats", "obj_fcn_chk_freq".
+        run_parameters: parameters dictionary with keys "k", "nmf_max_iterations",
+            "cluster_min_repeats", "nmf_conv_check_freq".
 
     Returns:
         h_matrix: nonnegative right factor matrix (H).
     """
-    k = int(run_parameters["k"])
-    obj_fcn_chk_freq = int(run_parameters["obj_fcn_chk_freq"])
-    h_clust_eq_limit = float(run_parameters["h_clust_eq_limit"])
+    k = int(run_parameters["number_of_clusters"])
+    nmf_conv_check_freq = int(run_parameters["nmf_conv_check_freq"])
+    nmf_max_invariance = float(run_parameters["nmf_max_invariance"])
     epsilon = 1e-15
     w_matrix = np.random.rand(x_matrix.shape[0], k)
     w_matrix = maximum(w_matrix / maximum(sum(w_matrix), epsilon), epsilon)
     h_matrix = np.random.rand(k, x_matrix.shape[1])
     h_clust_eq = np.argmax(h_matrix, 0)
     h_eq_count = 0
-    for itr in range(0, int(run_parameters["it_max"])):
-        if np.mod(itr, obj_fcn_chk_freq) == 0:
+    for itr in range(0, int(run_parameters["nmf_max_iterations"])):
+        if np.mod(itr, nmf_conv_check_freq) == 0:
             h_clusters = np.argmax(h_matrix, 0)
             if (itr > 0) & (sum(h_clust_eq != h_clusters) == 0):
-                h_eq_count = h_eq_count + obj_fcn_chk_freq
+                h_eq_count = h_eq_count + nmf_conv_check_freq
             else:
                 h_eq_count = 0
             h_clust_eq = h_clusters
-            if h_eq_count >= h_clust_eq_limit:
+            if h_eq_count >= nmf_max_invariance:
                 break
         numerator = maximum(np.dot(x_matrix, h_matrix.T), epsilon)
         denomerator = maximum(np.dot(w_matrix, np.dot(h_matrix, h_matrix.T)), epsilon)
