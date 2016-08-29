@@ -1,5 +1,4 @@
 from setuptools import setup
-import vcversioner
 from os import path
 
 # Get the current directory
@@ -10,7 +9,7 @@ with open(path.join(cur_dir, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='knpackage',
-    version='0.1.2',
+    version='0.1.4',
     #version=vcversioner.find_version().version,
     #setup_requires=['vcversioner'],
     #vcversioner={
