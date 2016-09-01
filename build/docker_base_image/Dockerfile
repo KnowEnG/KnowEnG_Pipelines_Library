@@ -7,4 +7,3 @@ RUN apt-get update && \
 
 RUN pip3 install -I numpy==1.11.1 pandas==0.18.1 scipy==0.18.0 scikit-learn==0.17.1 matplotlib==1.4.2 pyyaml
 
-
