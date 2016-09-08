@@ -37,7 +37,7 @@ class TestGet_spreadsheet_df(unittest.TestCase):
                "row2\t1\t1\t2\n"
         golden_output = pd.DataFrame([[6,7,8],[1,1,2]], columns=['col1','col2', 'col3'], index=['row1', 'row2'])
         self.createFile(self.config_dir, self.user_spreadsheet, data)
-        spreadsheet = knpkg.get_spreadsheet_df(self.run_parameter_template)
+        spreadsheet = knpkg.get_spreadsheet_df(self.full_file_path)
         npytest.assert_array_equal(golden_output,spreadsheet)
 
 
