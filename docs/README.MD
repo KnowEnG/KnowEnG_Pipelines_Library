@@ -5,7 +5,7 @@
     
 * Change to the Samples_Clustering_Pipeline/docs directory in your cloned code.
 * Generate the intermediate (.rst) files at the command prompt:
-    * >> sphinx-apidoc -f -o source/ ../src/
+    * >> sphinx-apidoc -f -o source/ ../knpackage/
     
 * Use the ./docs/Makefile to generate the _html_ code:
     * >> make html
