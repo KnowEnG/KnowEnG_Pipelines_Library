@@ -21,6 +21,6 @@ setup(
     url='https://github.com/KnowEnG-Research/KnowEnG_Pipelines_Library',
     author='KnowEng Dev',
     author_email='knowengdev@gmail.com',
-    license='MIT',
+    license='UIUC',
     packages=['knpackage'],
     zip_safe=False)

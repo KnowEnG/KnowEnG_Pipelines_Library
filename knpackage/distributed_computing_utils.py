@@ -46,10 +46,8 @@ def create_cluster_worker(cluster, i, *args_to_func):
 
     print("Start creating clusters {}.....".format(str(i)))
     try:
-        send_args = list(args_to_func)
-
-        print("len of send_args = {}".format(len(send_args)))
-        job = cluster.submit(*send_args)
+        print("len of send_args = {}".format(len(args_to_func)))
+        job = cluster.submit(*args_to_func)
         job.id = i
         ret = job()
         print(ret, job.stdout, job.stderr, job.exception, job.ip_addr, job.start_time, job.end_time)
