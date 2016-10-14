@@ -39,12 +39,12 @@ def create_cluster_worker(cluster, i, *args_to_func):
         *args_to_func: a list of arguments following by the order of arguments defined in
             calling function.
 
-
     Returns:
 
     '''
     import sys
-    # print("Start creating clusters {}.....".format(str(i)))
+
+    print("Start creating clusters {}.....".format(str(i)))
     try:
         send_args = list(args_to_func)
 
