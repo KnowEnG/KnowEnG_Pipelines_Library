@@ -1,3 +1,7 @@
+'''
+    This module provides functions to run code in a distributed way
+'''
+
 def generate_compute_clusters(cluster_ip_addresses, func_name, dependency_list):
     '''
     Generate clusters based on given list of ip address
@@ -14,6 +18,7 @@ def generate_compute_clusters(cluster_ip_addresses, func_name, dependency_list):
     import sys
     import dispy
     import logging
+
     try:
         cluster_list = []
         range_list = range(0, len(cluster_ip_addresses))
@@ -159,6 +164,7 @@ def determine_parallelism_locally(number_of_loops):
 
     '''
     import multiprocessing
+
     number_of_cpu = multiprocessing.cpu_count()
     if (number_of_loops < number_of_cpu):
         return number_of_loops
