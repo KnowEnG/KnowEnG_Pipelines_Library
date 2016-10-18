@@ -31,7 +31,7 @@ def generate_compute_clusters(cluster_ip_addresses, func_name, dependency_list):
             cluster_list.append(cur_cluster)
         return cluster_list
     except:
-        print("Unexpected error: ", sys.exc_info())
+        print("Unexpected error: {}".format(sys.exc_info()))
         raise
 
 
@@ -58,7 +58,7 @@ def create_cluster_worker(cluster, i, *args_to_func):
         ret = job()
         print(ret, job.stdout, job.stderr, job.exception, job.ip_addr, job.start_time, job.end_time)
     except:
-        print("Unexpected error: ", sys.exc_info())
+        print("Unexpected error: {}".format(sys.exc_info()))
         raise
 
 
@@ -97,7 +97,7 @@ def parallel_submitting_job_to_each_compute_node(cluster_list, number_of_jobs_ea
         for cluster in cluster_list:
             cluster.close()
     except:
-        print("Unexpected error: ", sys.exc_info())
+        print("Unexpected error: {}".format(sys.exc_info()))
         raise
 
 
