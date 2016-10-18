@@ -9,7 +9,7 @@ with open(path.join(cur_dir, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='knpackage',
-    version='0.1.4',
+    version='0.1.5',
     #version=vcversioner.find_version().version,
     #setup_requires=['vcversioner'],
     #vcversioner={

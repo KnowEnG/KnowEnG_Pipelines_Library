@@ -31,7 +31,8 @@ def generate_compute_clusters(cluster_ip_addresses, func_name, dependency_list):
             cluster_list.append(cur_cluster)
         return cluster_list
     except:
-        raise OSError(sys.exc_info())
+        print("Unexpected error: ", sys.exc_info())
+        raise
 
 
 def create_cluster_worker(cluster, i, *args_to_func):
@@ -57,7 +58,8 @@ def create_cluster_worker(cluster, i, *args_to_func):
         ret = job()
         print(ret, job.stdout, job.stderr, job.exception, job.ip_addr, job.start_time, job.end_time)
     except:
-        raise OSError(sys.exc_info())
+        print("Unexpected error: ", sys.exc_info())
+        raise
 
 
 def parallel_submitting_job_to_each_compute_node(cluster_list, number_of_jobs_each_node, *arguments):
@@ -95,7 +97,8 @@ def parallel_submitting_job_to_each_compute_node(cluster_list, number_of_jobs_ea
         for cluster in cluster_list:
             cluster.close()
     except:
-        raise OSError(sys.exc_info())
+        print("Unexpected error: ", sys.exc_info())
+        raise
 
 
 def determine_number_of_compute_nodes(cluster_ip_addresses, number_of_bootstraps):
@@ -171,4 +174,25 @@ def determine_parallelism_locally(number_of_loops):
     else:
         return number_of_cpu
 
+
+
+def move_files(src, dst):
+    '''Move files from source directory to destination
+    Args:
+        src: source directory
+        dst: destination directory
+
+    Returns:
+
+    '''
+    import subprocess
+    import sys
+    try:
+        cmd = ['mv', src, dst]
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        output, err = process.communicate()
+        print(output)
+        print(err)
+    except:
+        raise OSError(sys.exc_info())
 
