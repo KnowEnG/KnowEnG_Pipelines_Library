@@ -2,6 +2,7 @@
     This module provides functions to run code in a distributed way
 '''
 
+
 def generate_compute_clusters(cluster_ip_addresses, func_name, dependency_list):
     '''
     Generate clusters based on given list of ip address
@@ -175,7 +176,6 @@ def determine_parallelism_locally(number_of_loops):
         return number_of_cpu
 
 
-
 def move_files(src, dst):
     '''Move files from source directory to destination
     Args:
@@ -195,4 +195,3 @@ def move_files(src, dst):
         print(err)
     except:
         raise OSError(sys.exc_info())
-
