@@ -456,7 +456,7 @@ def smooth_matrix_with_rwr(restart, network_sparse, run_parameters):
     alpha = run_parameters["rwr_restart_probability"]
     smooth_0 = restart
     smooth_r = (1. - alpha) * restart
-    for step in range(0, run_parameters["nmf_max_iterations"]):
+    for step in range(0, run_parameters["rwr_max_iterations"]):
         smooth_1 = alpha * network_sparse.dot(smooth_0) + smooth_r
         deltav = LA.norm(smooth_1 - smooth_0)
         if deltav < tol:
