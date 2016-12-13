@@ -199,7 +199,7 @@ def move_files(src, dst):
         raise OSError(sys.exc_info())
 
 
-def parallel_processes_locally(function_name, zipped_arg_list, number_of_loop_to_be_parallelized):
+def parallelize_processes_locally(function_name, zipped_arg_list, number_of_loop_to_be_parallelized):
     '''
     Locally parallelize processes based on resource in local machine
 
