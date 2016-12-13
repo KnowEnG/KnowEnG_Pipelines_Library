@@ -173,11 +173,13 @@ def determine_parallelism_locally(number_of_loops):
     if (number_of_loops < number_of_cpu):
         return number_of_loops
     else:
-        return number_of_cpu
+        return number_of_cpu-1
 
 
 def move_files(src, dst):
-    '''Move files from source directory to destination
+    '''
+    Move files from source directory to destination
+
     Args:
         src: source directory
         dst: destination directory
@@ -195,3 +197,48 @@ def move_files(src, dst):
         print(err)
     except:
         raise OSError(sys.exc_info())
+
+
+def parallel_processes_locally(function_name, zipped_arg_list, number_of_loop_to_be_parallelized):
+    '''
+    Locally parallelize processes based on resource in local machine
+
+    Args:
+        function_name: the worker function to be parallelized
+        zipped_arg_list: argument as a zipped object
+        number_of_loop_to_be_parallelized: number of loops to be partitioned
+
+    Returns:
+        N/A
+    '''
+    import sys
+    import multiprocessing
+
+    parallelism = determine_parallelism_locally(number_of_loop_to_be_parallelized)
+    try:
+        p = multiprocessing.Pool(processes=parallelism)
+        p.starmap(function_name, zipped_arg_list)
+
+        p.close()
+        p.join()
+        return "Succeeded in running local parallelization!"
+    except:
+        raise OSError("Failed running parallel processing:{}".format(sys.exc_info()))
+
+
+def zip_parameters(*args):
+    '''
+    Zip arguments to be an zip object. Note, the last element has to be a range for parallelization
+    Args:
+        *args: any length of argument with a range to be the last element
+
+    Returns:
+        a zipped argument
+    '''
+    import itertools
+
+    args_list = list(args)
+    index_before_last = len(args_list) - 1
+    args_list[0:index_before_last] = [itertools.repeat(arg) for arg in args_list[0:index_before_last]]
+
+    return zip(*args_list)
