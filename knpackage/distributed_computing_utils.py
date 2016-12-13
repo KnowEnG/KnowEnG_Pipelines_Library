@@ -1,5 +1,5 @@
 '''
-    This module provides functions to run code in a distributed way
+    This module provides functions to run code in a parallelized/distributed way
 '''
 
 
@@ -229,7 +229,7 @@ def parallel_processes_locally(function_name, zipped_arg_list, number_of_loop_to
 def zip_parameters(*args):
     '''
     Zip arguments to be an zip object. Note, the last element has to be a range for parallelization
-    
+
     Args:
         *args: any length of argument with a range to be the last element
 
@@ -243,3 +243,5 @@ def zip_parameters(*args):
     args_list[0:index_before_last] = [itertools.repeat(arg) for arg in args_list[0:index_before_last]]
 
     return zip(*args_list)
+
+
