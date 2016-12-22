@@ -212,8 +212,10 @@ def parallelize_processes_locally(function_name, zipped_arg_list, number_of_loop
         N/A
     '''
     import sys
+    import socket
     import multiprocessing
 
+    host = socket.gethostname()
     parallelism = determine_parallelism_locally(number_of_loop_to_be_parallelized)
     try:
         p = multiprocessing.Pool(processes=parallelism)
@@ -221,9 +223,9 @@ def parallelize_processes_locally(function_name, zipped_arg_list, number_of_loop
 
         p.close()
         p.join()
-        return "Succeeded in running local parallelization!"
+        return "Succeeded in running parallelization on host {}!".format(host)
     except:
-        raise OSError("Failed running parallel processing:{}".format(sys.exc_info()))
+        raise OSError("Failed running parallel processing on host {}:{}".format(host, sys.exc_info()))
 
 
 def zip_parameters(*args):

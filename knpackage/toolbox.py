@@ -16,8 +16,10 @@ import pandas as pd
 import scipy.sparse as spar
 from scipy.sparse import csgraph
 from sklearn.cluster import KMeans
+from sklearn.preprocessing import normalize
 
 import yaml
+
 
 def get_run_directory_and_file(args):
     """ Read system input arguments (argv) to get the run directory name.
@@ -36,6 +38,7 @@ def get_run_directory_and_file(args):
     run_file = args.run_file
 
     return run_directory, run_file
+
 
 def get_run_parameters(run_directory, run_file):
     """ Read system input arguments run directory name and run_file into a dictionary.
@@ -73,6 +76,7 @@ def get_spreadsheet_df(spreadsheet_name_full_path):
 
     return spreadsheet_df
 
+
 def get_network_df(network_name):
     """ Read in the cleaned subnet from KnowEnG network.
 
@@ -95,6 +99,7 @@ def get_network_df(network_name):
 
     return network_df
 
+
 def extract_network_node_names(network_df):
     """ extract node names lists from network.
 
@@ -106,11 +111,11 @@ def extract_network_node_names(network_df):
         node_list_2: all names in column 2.
     """
 
-
     node_list_1 = list(set(network_df.values[:, 0]))
     node_list_2 = list(set(network_df.values[:, 1]))
 
     return node_list_1, node_list_2
+
 
 def find_unique_node_names(node_list_1, node_list_2):
     """ get the list (set union) of genes in either of the input lists.
@@ -126,6 +131,7 @@ def find_unique_node_names(node_list_1, node_list_2):
 
     return unique_node_names
 
+
 def find_common_node_names(node_list_1, node_list_2):
     """ get the list (set intersection) of genes in both of the input lists.
 
@@ -140,6 +146,7 @@ def find_common_node_names(node_list_1, node_list_2):
 
     return common_node_names
 
+
 def extract_spreadsheet_gene_names(spreadsheet_df):
     """ get the uinque list (df.index.values) of genes in the spreadsheet dataframe.
 
@@ -153,6 +160,7 @@ def extract_spreadsheet_gene_names(spreadsheet_df):
 
     return spreadsheet_gene_names
 
+
 def find_dropped_node_names(spreadsheet_df, unique_gene_names):
     """ write list of genes dropped from the input spreadsheed to
         run_parameters['tmp_directory'].file_name.
@@ -164,6 +172,7 @@ def find_dropped_node_names(spreadsheet_df, unique_gene_names):
     droplist = spreadsheet_df.loc[~spreadsheet_df.index.isin(unique_gene_names)]
     droplist = droplist.index.values
     return droplist
+
 
 def update_spreadsheet_df(spreadsheet_df, gene_names):
     """ resize and reorder spreadsheet dataframe to only the gene_names list.
@@ -178,6 +187,7 @@ def update_spreadsheet_df(spreadsheet_df, gene_names):
 
     return spreadsheet_df.loc[gene_names].fillna(0)
 
+
 def update_network_df(network, nodes_list, node_id):
     """ remove nodes not found as nodes_list in network node_id.
 
@@ -190,6 +200,7 @@ def update_network_df(network, nodes_list, node_id):
     """
 
     return network[network[node_id].isin(nodes_list)]
+
 
 def create_node_names_dict(node_names, start_value=0):
     """ create a python dictionary to look up gene locations from gene names
@@ -205,6 +216,7 @@ def create_node_names_dict(node_names, start_value=0):
 
     return node_names_dictionary
 
+
 def create_reverse_node_names_dict(dictionary):
     """ create reverse dictionary (keys > values, values > keys).
 
@@ -216,6 +228,7 @@ def create_reverse_node_names_dict(dictionary):
     """
 
     return {value: key for key, value in dictionary.items()}
+
 
 def symmetrize_df(network):
     """ symmetrize network in sparse (3 cloumn) form.
@@ -243,6 +256,7 @@ def symmetrize_df(network):
 
     return symm_network
 
+
 def map_node_names_to_index(network_df, genes_map, node_id):
     """ replace the node names with numbers for formation of numeric sparse matrix.
 
@@ -261,6 +275,7 @@ def map_node_names_to_index(network_df, genes_map, node_id):
 
     return network_df
 
+
 def create_df_with_sample_labels(sample_names, labels):
     """ create dataframe from spreadsheet column names with cluster number assignments.
 
@@ -274,6 +289,7 @@ def create_df_with_sample_labels(sample_names, labels):
     clusters_dataframe = pd.DataFrame(data=labels, index=sample_names)
 
     return clusters_dataframe
+
 
 def convert_network_df_to_sparse(pg_network_df, row_size, col_size):
     """ convert global network to sparse matrix.
@@ -306,6 +322,7 @@ def convert_network_df_to_sparse(pg_network_df, row_size, col_size):
 
     return pg_network_sparse
 
+
 def save_df(result_df, tmp_dir, file_name):
     """ save the result of DRaWR in tmp directory, file_name.
 
@@ -317,9 +334,10 @@ def save_df(result_df, tmp_dir, file_name):
     # if not os.path.isdir(tmp_dir):
     #     print('invalid tmp_dir')
     #     return False
-        
+
     file_path = os.path.join(tmp_dir, file_name)
     result_df.to_csv(file_path, header=True, index=False, sep='\t')
+
 
 def append_column_to_spreadsheet(spreadsheet_df, column, col_name):
     """ append baseline vector of the user spreadsheet matrix.
@@ -341,6 +359,7 @@ def append_column_to_spreadsheet(spreadsheet_df, column, col_name):
 
     return spreadsheet_df
 
+
 def normalize_network_df_by_sum(network_df, node_id):
     """ normalize the network column with numbers for input.
         Note: expecting zero or no diagonal.
@@ -359,6 +378,7 @@ def normalize_network_df_by_sum(network_df, node_id):
 
     return network_df
 
+
 def form_hybrid_network_df(list_of_networks):
     """ concatenate a list of networks.
         Note: expecting zero or no diagonal.
@@ -373,6 +393,7 @@ def form_hybrid_network_df(list_of_networks):
     #     print('empty input')
     #     return False
     return pd.concat(list_of_networks, ignore_index=True)
+
 
 def normalize_sparse_mat_by_diagonal(network_mat):
     """ square root of inverse of diagonal D (D * network_mat * D) normaization.
@@ -393,6 +414,7 @@ def normalize_sparse_mat_by_diagonal(network_mat):
 
     return network_mat
 
+
 def form_network_laplacian_matrix(network_mat):
     """ get the laplacian matrix components needed by net nmf
 
@@ -411,6 +433,7 @@ def form_network_laplacian_matrix(network_mat):
 
     return diag_laplacian, locs_laplacian
 
+
 def sample_a_matrix(spreadsheet_mat, rows_fraction, cols_fraction):
     """ percent_sample x percent_sample random sample, from spreadsheet_mat.
 
@@ -422,7 +445,7 @@ def sample_a_matrix(spreadsheet_mat, rows_fraction, cols_fraction):
         sample_random: A specified precentage sample of the spread sheet.
         sample_permutation: the array that correponds to columns sample.
     """
-    features_size = int(np.round(spreadsheet_mat.shape[0] * (1-rows_fraction)))
+    features_size = int(np.round(spreadsheet_mat.shape[0] * (1 - rows_fraction)))
     features_permutation = np.random.permutation(spreadsheet_mat.shape[0])
     features_permutation = features_permutation[0:features_size].T
 
@@ -438,6 +461,7 @@ def sample_a_matrix(spreadsheet_mat, rows_fraction, cols_fraction):
     sample_permutation = sample_permutation[positive_col_set]
 
     return sample_random, sample_permutation
+
 
 def smooth_matrix_with_rwr(restart, network_sparse, run_parameters):
     """ simulate a random walk with restart. iterate: (R_n+1 = a*N*R_n + (1-a)*R_n).
@@ -465,6 +489,7 @@ def smooth_matrix_with_rwr(restart, network_sparse, run_parameters):
 
     return smooth_1, step
 
+
 def get_quantile_norm_matrix(sample):
     """ normalizes an array using quantile normalization (ranking).
 
@@ -482,6 +507,7 @@ def get_quantile_norm_matrix(sample):
         sample_quantile_norm[index[:, j], j] = mean_per_row[:]
 
     return sample_quantile_norm
+
 
 def update_h_coordinate_matrix(w_matrix, x_matrix):
     """ nonnegative right factor matrix for perform_net_nmf function s.t. X ~ W.H.
@@ -511,7 +537,7 @@ def update_h_coordinate_matrix(w_matrix, x_matrix):
             mcode_uniq_col_ix = np.arange(0, n_cols)
             h_ette = np.zeros((m_rows, n_cols))
             h_pos_ette = h_pos[:, col_list]
-            mcoding = np.dot(2**(np.arange(0, m_rows)), np.int_(h_pos_ette))
+            mcoding = np.dot(2 ** (np.arange(0, m_rows)), np.int_(h_pos_ette))
             mcode_uniq = np.unique(mcoding)
             for u_n in mcode_uniq:
                 ixidx = mcoding == u_n
@@ -533,6 +559,7 @@ def update_h_coordinate_matrix(w_matrix, x_matrix):
             break
 
     return h_matrix
+
 
 def perform_net_nmf(x_matrix, lap_val, lap_dag, run_parameters):
     """ perform network based nonnegative matrix factorization, minimize:
@@ -575,6 +602,7 @@ def perform_net_nmf(x_matrix, lap_val, lap_dag, run_parameters):
 
     return h_matrix
 
+
 def perform_nmf(x_matrix, run_parameters):
     """ nonnegative matrix factorization, minimize the diffence between X and W dot H
         with positive factor matrices W, and H.
@@ -614,6 +642,7 @@ def perform_nmf(x_matrix, run_parameters):
 
     return h_matrix
 
+
 def update_linkage_matrix(encode_mat, sample_perm, linkage_matrix):
     ''' update the connectivity matrix by summing the un-permuted linkages.
     encode_mat: (permuted) nonnegative right factor matrix (H) - encoded linkage.
@@ -639,6 +668,7 @@ def update_linkage_matrix(encode_mat, sample_perm, linkage_matrix):
 
     return linkage_matrix
 
+
 def update_indicator_matrix(sample_perm, indicator_matrix):
     ''' update the indicator matrix by summing the un-permutation.
 
@@ -652,6 +682,7 @@ def update_indicator_matrix(sample_perm, indicator_matrix):
     indicator_matrix[sample_perm[:, None], sample_perm] += 1
 
     return indicator_matrix
+
 
 def perform_kmeans(consensus_matrix, k=3):
     """ determine cluster assignments for consensus matrix using K-means.
@@ -668,6 +699,7 @@ def perform_kmeans(consensus_matrix, k=3):
 
     return labels
 
+
 def get_timestamp(stamp_units=1e6):
     """ get a time stamp string - current time as integer string.
 
@@ -680,6 +712,7 @@ def get_timestamp(stamp_units=1e6):
     timestamp_string = np.str_(int(time.time() * np.maximum(stamp_units, 1)))
 
     return timestamp_string
+
 
 def create_timestamped_filename(name_base, name_extension=None, precision=None, n_digits=9):
     """ insert a time stamp into the filename_ before .extension.
@@ -698,7 +731,7 @@ def create_timestamped_filename(name_base, name_extension=None, precision=None, 
         t0 = time.time()
         t_dec = t0 - np.floor(t0)
         t_dec = '{}'.format(t_dec)
-        nstr = time.strftime("%a_%d_%b_%Y_%H_%M_%S", time.localtime()) + t_dec[1:max(1, n_digits+2)]
+        nstr = time.strftime("%a_%d_%b_%Y_%H_%M_%S", time.localtime()) + t_dec[1:max(1, n_digits + 2)]
     else:
         time_step = max(dt_min, precision)
         nstr = np.str_(int(time.time() * time_step))
@@ -709,6 +742,7 @@ def create_timestamped_filename(name_base, name_extension=None, precision=None, 
         time_stamped_file_name = name_base + '_' + nstr + '.' + name_extension
 
     return time_stamped_file_name
+
 
 def append_run_parameters_dict(run_parameters, key_name, value_str):
     """ add a key-value pair to the run parameters dictionary.
@@ -731,6 +765,7 @@ def append_run_parameters_dict(run_parameters, key_name, value_str):
 
     return run_parameters
 
+
 def create_dir(dir_path, dir_name, timestamp=None):
     """ create a "dir_name" with time stamp directory
 
@@ -748,6 +783,7 @@ def create_dir(dir_path, dir_name, timestamp=None):
 
     return new_dir_name
 
+
 def remove_dir(dir_name):
     """ remove directory and all the files it contains.
 
@@ -762,3 +798,33 @@ def remove_dir(dir_name):
     os.rmdir(dir_name)
 
     return
+
+
+def get_sparse_network_matrix(gg_network_name_full_path):
+    """ create sparse matrix based on the input gene gene network data
+
+    Args:
+        gg_network_name_full_path: file path to gene gene network data
+
+    Returns:
+        network_mat: a normalized sparse matrix
+        unique_gene_names: a list of unique gene names
+    """
+    network_df = get_network_df(gg_network_name_full_path)
+    node_1_names, node_2_names = extract_network_node_names(network_df)
+    unique_gene_names = find_unique_node_names(node_1_names, node_2_names)
+
+    unique_gene_names = sorted(unique_gene_names)
+
+    genes_lookup_table = create_node_names_dict(unique_gene_names)
+
+    network_df = map_node_names_to_index(network_df, genes_lookup_table, 'node_1')
+    network_df = map_node_names_to_index(network_df, genes_lookup_table, 'node_2')
+
+    network_df = symmetrize_df(network_df)
+    network_mat_sparse = convert_network_df_to_sparse(
+        network_df, len(unique_gene_names), len(unique_gene_names))
+
+    network_mat = normalize(network_mat_sparse, norm="l1", axis=0)
+
+    return network_mat, unique_gene_names
