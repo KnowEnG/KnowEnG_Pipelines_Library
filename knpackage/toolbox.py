@@ -6,6 +6,7 @@ Created on Tue Jun 28 14:39:35 2016
 
 """
 import os
+import sys
 import argparse
 import time
 import numpy as np
@@ -70,9 +71,13 @@ def get_spreadsheet_df(spreadsheet_name_full_path):
     Returns:
         spreadsheet_df: the spreadsheet dataframe.
     """
-
-    spreadsheet_df = pd.read_csv(
-        spreadsheet_name_full_path, sep='\t', header=0, index_col=0)
+    try:
+        spreadsheet_df = pd.read_csv(
+            spreadsheet_name_full_path, sep='\t', header=0, index_col=0)
+    except IOError:
+        print("Unexpected error during reading input file {}: {}".format(spreadsheet_name_full_path,
+                                                                         sys.exc_info()[0]))
+        raise
 
     return spreadsheet_df
 
@@ -87,14 +92,12 @@ def get_network_df(network_name):
         network_df: 3-column dataframe of cleaned network
     """
     try:
-        f = open(network_name)
+        network_df = pd.read_csv(
+            network_name, header=None, names=None, delimiter='\t', usecols=[0, 1, 2])
     except IOError:
-        print('cannot open', network_name)
-    else:
-        f.close()
+        print("Unexpected error during reading input file {}: {}".format(network_name, sys.exc_info()[0]))
+        raise
 
-    network_df = pd.read_csv(
-        network_name, header=None, names=None, delimiter='\t', usecols=[0, 1, 2])
     network_df.columns = ['node_1', 'node_2', 'wt']
 
     return network_df
@@ -796,8 +799,6 @@ def remove_dir(dir_name):
             os.remove(os.path.join(dir_name, file_name))
 
     os.rmdir(dir_name)
-
-    return
 
 
 def get_sparse_network_matrix(gg_network_name_full_path):
