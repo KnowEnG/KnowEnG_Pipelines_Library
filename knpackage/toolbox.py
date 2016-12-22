@@ -72,8 +72,7 @@ def get_spreadsheet_df(spreadsheet_name_full_path):
         spreadsheet_df: the spreadsheet dataframe.
     """
     try:
-        spreadsheet_df = pd.read_csv(
-            spreadsheet_name_full_path, sep='\t', header=0, index_col=0)
+        spreadsheet_df = pd.read_csv(spreadsheet_name_full_path, sep='\t', header=0, index_col=0)
     except IOError:
         print("Unexpected error during reading input file {}: {}".format(spreadsheet_name_full_path,
                                                                          sys.exc_info()[0]))
@@ -92,8 +91,7 @@ def get_network_df(network_name):
         network_df: 3-column dataframe of cleaned network
     """
     try:
-        network_df = pd.read_csv(
-            network_name, header=None, names=None, delimiter='\t', usecols=[0, 1, 2])
+        network_df = pd.read_csv(network_name, header=None, names=None, delimiter='\t', usecols=[0, 1, 2])
     except IOError:
         print("Unexpected error during reading input file {}: {}".format(network_name, sys.exc_info()[0]))
         raise
