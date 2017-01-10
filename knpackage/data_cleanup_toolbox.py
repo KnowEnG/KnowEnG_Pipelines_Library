@@ -4,7 +4,7 @@
     indicate if the user spreadsheet is valid or not. 
 """
 import pandas
-import redis_utilities as redutil
+import knpackage.redis_utilities as redisutil
 import yaml
 import os
 
@@ -261,12 +261,12 @@ def check_ensemble_gene_name(data_frame, run_parameters):
          match_flag: Boolean value indicates the status of current check
          message: A message indicates the current status of current check
     """
-    redis_db = redutil.get_database(run_parameters['redis_credential'])
+    redis_db = redisutil.get_database(run_parameters['redis_credential'])
 
     data_frame['original'] = data_frame.index
 
     data_frame.index = data_frame.index.map(
-        lambda x: redutil.conv_gene(redis_db, x, run_parameters['source_hint'], run_parameters['taxonid']))
+        lambda x: redisutil.conv_gene(redis_db, x, run_parameters['source_hint'], run_parameters['taxonid']))
 
     # extracts all mapped rows in dataframe
     output_df_mapped = data_frame[~data_frame.index.str.contains(r'^unmapped.*$')]
