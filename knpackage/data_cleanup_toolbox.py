@@ -174,6 +174,7 @@ def check_input_value_for_gene_prioritazion(data_frame, phenotype_df, run_parame
 
     Returns:
         data_frame_trimed: Either None or trimed data frame will be returned for calling function
+        phenotype_trimed: Either None or trimed data frame will be returned for calling function
         message: A message indicates the status of current check
     """
     # drops column which contains NA in data_frame
@@ -212,10 +213,6 @@ def check_input_value_for_gene_prioritazion(data_frame, phenotype_df, run_parame
     if data_frame_trimed.empty:
         return None, None, "Cannot find valid value in user spreadsheet."
 
-    # store cleaned phenotype data to a file
-    output_file_basename = get_file_basename(run_parameters['phenotype_full_path'])
-    phenotype_trimed.to_csv(run_parameters['results_directory'] + '/' + output_file_basename + "_ETL.tsv",
-                            sep='\t', header=True, index=True)
     return data_frame_trimed, phenotype_trimed, "Passed value check validation."
 
 
