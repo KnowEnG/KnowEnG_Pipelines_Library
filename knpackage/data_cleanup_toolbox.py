@@ -161,7 +161,7 @@ def check_duplicate_row_name(data_frame):
     return None, "An unexpected error occurred during checking duplicate row name."
 
 
-def check_input_value_for_gene_prioritazion(data_frame, phenotype_df, run_parameters):
+def check_input_value_for_gene_prioritazion(data_frame, phenotype_df):
     """
     This input value check is specifically designed for gene_priorization_pipeline.
     1. user spreadsheet contains real number.
