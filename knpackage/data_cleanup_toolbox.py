@@ -178,6 +178,7 @@ def check_input_value_for_gene_prioritazion(data_frame, phenotype_df, run_parame
     """
     # drops column which contains NA in data_frame
     data_frame_dropna = data_frame.dropna(axis=1)
+
     if data_frame_dropna.empty:
         return None, None, "Data frame is empty after remove NA."
 

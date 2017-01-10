@@ -9,11 +9,11 @@ with open(path.join(cur_dir, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='knpackage',
-    version='0.1.9',
+    version='0.1.10',
     include_dev_version=True,
     description='KnowEng toolbox',
     long_description=long_description,
-    url='https://github.com/KnowEnG-Research/KnowEnG_Pipelines_Library',
+    url='https://github.com/KnowEnG/KnowEnG_Pipelines_Library',
     author='KnowEng Dev',
     author_email='knowengdev@gmail.com',
     license='University of Illinois Board of Trustees',
