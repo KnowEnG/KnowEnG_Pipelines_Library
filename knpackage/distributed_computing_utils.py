@@ -173,7 +173,7 @@ def determine_parallelism_locally(number_of_loops):
     if (number_of_loops < number_of_cpu):
         return number_of_loops
     else:
-        return number_of_cpu-1
+        return number_of_cpu - 1
 
 
 def move_files(src, dst):
@@ -247,3 +247,37 @@ def zip_parameters(*args):
     return zip(*args_list)
 
 
+def execute_distribute_computing_job(cluster_ip_address_list, number_of_bootstraps, func_args, dist_main_function,
+                                     dependency_list):
+    """
+    Executes distribute computing job.
+    Args:
+        cluster_ip_address_list: a list of ip addresses of cluster which will run the job
+        number_of_bootstraps: number of bootstraps
+        func_args: arguments of the function that will be run in distribute mode
+        dist_main_function: the name of the function that will be run in distribute mode
+        dependency_list: a list of dependency functions of dist_main_function
+
+    Returns:
+        NA
+    """
+    print("Start distributing jobs......")
+
+    # determine number of compute nodes to use
+    number_of_comptue_nodes = determine_number_of_compute_nodes(cluster_ip_address_list, number_of_bootstraps)
+    print("Number of compute nodes = {}".format(number_of_comptue_nodes))
+
+    # create clusters
+    cluster_list = generate_compute_clusters(
+        cluster_ip_address_list[0:number_of_comptue_nodes],
+        dist_main_function,
+        dependency_list)
+
+    # calculates number of jobs assigned to each compute node
+    number_of_jobs_each_node = determine_job_number_on_each_compute_node(number_of_bootstraps, len(cluster_list))
+
+
+    # parallel submitting jobs
+    parallel_submitting_job_to_each_compute_node(cluster_list, number_of_jobs_each_node, *func_args)
+
+    print("Finish distributing jobs......")
