@@ -28,7 +28,7 @@ def generate_compute_clusters(cluster_ip_addresses, func_name, dependency_list):
             cur_cluster = dispy.JobCluster(func_name,
                                            nodes=[cluster_ip_addresses[i]],
                                            depends=dependency_list,
-                                           loglevel=logging.WARNING)
+                                           loglevel=dispy.logger.DEBUG)
             cluster_list.append(cur_cluster)
         return cluster_list
     except:
