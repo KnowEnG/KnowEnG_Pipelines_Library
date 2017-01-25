@@ -275,8 +275,9 @@ def execute_distribute_computing_job(cluster_ip_address_list, number_of_bootstra
     # calculates number of jobs assigned to each compute node
     number_of_jobs_each_node = determine_job_number_on_each_compute_node(number_of_bootstraps, len(cluster_list))
 
-
     # parallel submitting jobs
     parallel_submitting_job_to_each_compute_node(cluster_list, number_of_jobs_each_node, *func_args)
 
     print("Finish distributing jobs......")
+
+    
