@@ -18,17 +18,16 @@ def generate_compute_clusters(cluster_ip_addresses, func_name, dependency_list):
     '''
     import sys
     import dispy
-    import logging
 
     try:
         cluster_list = []
         range_list = range(0, len(cluster_ip_addresses))
-        print(range_list)
+
         for i in range_list:
             cur_cluster = dispy.JobCluster(func_name,
                                            nodes=[cluster_ip_addresses[i]],
                                            depends=dependency_list,
-                                           loglevel=logging.WARNING)
+                                           loglevel=dispy.logger.DEBUG)
             cluster_list.append(cur_cluster)
         return cluster_list
     except:
@@ -53,7 +52,7 @@ def create_cluster_worker(cluster, i, *args_to_func):
 
     print("Start creating clusters {}.....".format(str(i)))
     try:
-        print("len of send_args = {}".format(len(args_to_func)))
+        print("Length of passing arguments = {}".format(len(args_to_func)))
         job = cluster.submit(*args_to_func)
         job.id = i
         ret = job()
@@ -276,8 +275,9 @@ def execute_distribute_computing_job(cluster_ip_address_list, number_of_bootstra
     # calculates number of jobs assigned to each compute node
     number_of_jobs_each_node = determine_job_number_on_each_compute_node(number_of_bootstraps, len(cluster_list))
 
-
     # parallel submitting jobs
     parallel_submitting_job_to_each_compute_node(cluster_list, number_of_jobs_each_node, *func_args)
 
     print("Finish distributing jobs......")
+
+    
