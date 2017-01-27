@@ -169,16 +169,12 @@ def determine_parallelism_locally(number_of_loops):
     import multiprocessing
 
     number_of_cpu = multiprocessing.cpu_count()
+    if (number_of_cpu == 0 or number_of_loops == 0):
+        return 1;
     if (number_of_loops < number_of_cpu):
-        if number_of_loops == 0:
-            return 1
-        else:
-            return number_of_loops
+        return number_of_loops
     else:
-        if number_of_cpu == 0:
-            return 1
-        else:
-            return number_of_cpu
+        return number_of_cpu
 
 
 def move_files(src, dst):
