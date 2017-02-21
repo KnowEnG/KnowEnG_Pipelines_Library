@@ -155,12 +155,13 @@ def determine_job_number_on_each_compute_node(number_of_bootstraps, number_of_co
     return number_of_scheduled_jobs
 
 
-def determine_parallelism_locally(number_of_loops):
+def determine_parallelism_locally(number_of_loops, user_defined_parallelism=0):
     '''
     Determine the parallelism on the current compute node
 
     Args:
         number_of_loops: total number of loops will be executed on current compute node
+        user_defined_parallelism: a customized parallelism specified by users
 
     Returns:
         number_of_cpu: parallelism on current compute node
@@ -169,10 +170,14 @@ def determine_parallelism_locally(number_of_loops):
     import multiprocessing
 
     number_of_cpu = multiprocessing.cpu_count()
+    # This condition happens when user_defined_parallelism is defined
+    if number_of_loops > 0 and user_defined_parallelism > 0:
+        return min(number_of_cpu, number_of_loops, user_defined_parallelism)
+    # The following conditions happen when user_defined_parallelism is not defined
     if (number_of_loops <= 0):
         return 1;
-    else:
-        return min(number_of_cpu, number_of_loops)
+
+    return min(number_of_cpu, number_of_loops)
 
 
 def move_files(src, dst):
@@ -198,7 +203,7 @@ def move_files(src, dst):
         raise OSError(sys.exc_info())
 
 
-def parallelize_processes_locally(function_name, zipped_arg_list, number_of_loop_to_be_parallelized):
+def parallelize_processes_locally(function_name, zipped_arg_list, parallelism):
     '''
     Locally parallelize processes based on resource in local machine
 
@@ -215,7 +220,6 @@ def parallelize_processes_locally(function_name, zipped_arg_list, number_of_loop
     import multiprocessing
 
     host = socket.gethostname()
-    parallelism = determine_parallelism_locally(number_of_loop_to_be_parallelized)
     try:
         p = multiprocessing.Pool(processes=parallelism)
         p.starmap(function_name, zipped_arg_list)
