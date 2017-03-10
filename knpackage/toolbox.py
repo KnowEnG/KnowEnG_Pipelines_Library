@@ -685,7 +685,7 @@ def update_indicator_matrix(sample_perm, indicator_matrix):
     return indicator_matrix
 
 
-def perform_kmeans(consensus_matrix, k=3):
+def perform_kmeans(consensus_matrix, k=3, random_state=10):
     """ determine cluster assignments for consensus matrix using K-means.
 
     Args:
@@ -695,7 +695,7 @@ def perform_kmeans(consensus_matrix, k=3):
     Returns:
         lablels: ordered cluster assignments for consensus_matrix (samples).
     """
-    cluster_handle = KMeans(k, random_state=10)
+    cluster_handle = KMeans(n_clusters=k, random_state=random_state)
     labels = cluster_handle.fit_predict(consensus_matrix)
 
     return labels
