@@ -33,29 +33,24 @@ def check_input_value_for_gene_prioritazion(data_frame, phenotype_df):
     if False in data_frame_check:
         return None, None, "Found not numeric value in user spreadsheet."
 
-    # drops columns with NA value in phenotype dataframe
-    phenotype_df = phenotype_df.dropna(axis=1)
+    # drops columns with NA value in phenotype dataframe (sample x phenotype)
+    phenotype_df_dropna = phenotype_df.dropna(axis=1)
 
-    # check phenotype value to be real value bigger than 0
-    phenotype_df = phenotype_df[(phenotype_df >= 0).all(1)]
+    phenotype_header = list(phenotype_df_dropna.columns.values)
+    data_frame_header = list(data_frame.columns.values)
 
-    if phenotype_df.empty:
-        return None, None, "Found negative value in phenotype data. Value should be positive."
+    # common headers between phenotype data and user spreadsheet
+    common_headers = list(set(phenotype_header) & set(data_frame_header))
 
-    phenotype_columns = list(phenotype_df.columns.values)
-    data_frame_columns = list(data_frame.columns.values)
-    # unordered name
-    common_cols = list(set(phenotype_columns) & set(data_frame_columns))
-
-    if not common_cols:
+    if not common_headers:
         return None, None, "Cannot find intersection between user spreadsheet column and phenotype data."
 
     # select common column to process, this operation will reorder the column
-    data_frame_trimed = data_frame[common_cols]
-    phenotype_trimed = phenotype_df[common_cols]
+    data_frame_trimed = data_frame[common_headers]
+    phenotype_trimed = phenotype_df_dropna[common_headers]
 
     if data_frame_trimed.empty:
         return None, None, "Cannot find valid value in user spreadsheet."
 
-    return data_frame_trimed, phenotype_trimed, "Passed value check validation."
+    return data_frame_trimed, phenotype_trimed, "Passed input value validation."
 
