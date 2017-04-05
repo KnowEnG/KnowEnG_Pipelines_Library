@@ -643,6 +643,83 @@ def perform_nmf(x_matrix, run_parameters):
 
     return h_matrix
 
+def save_a_clustering_to_tmp(h_matrix, sample_permutation, run_parameters, sequence_number):
+    """ save one h_matrix and one permutation in temorary files with sequence_number appended names.
+
+    Args:
+        h_matrix: k x permutation size matrix.
+        sample_permutation: indices of h_matrix columns permutation.
+        run_parameters: parmaeters including the "tmp_directory" name.
+        sequence_number: temporary file name suffix.
+    """
+    import os
+    import numpy as np
+
+    tmp_dir = run_parameters["tmp_directory"]
+
+    os.makedirs(tmp_dir, mode=0o755, exist_ok=True)
+
+    hname = os.path.join(tmp_dir, 'tmp_h_%d'%(sequence_number))
+    pname = os.path.join(tmp_dir, 'tmp_p_%d'%(sequence_number))
+
+    cluster_id = np.argmax(h_matrix, 0)
+    with open(hname, 'wb') as fh0:
+        cluster_id.dump(fh0)
+    with open(pname, 'wb') as fh1:
+        sample_permutation.dump(fh1)
+
+
+def form_consensus_matrix(run_parameters, number_of_samples):
+    """ compute the consensus matrix from the indicator and linkage matrix inputs
+        formed by the bootstrap "temp_*" files.
+
+    Args:
+        run_parameters: parameter set dictionary with "tmp_directory" key.
+        linkage_matrix: linkage matrix from initialization or previous call.
+        indicator_matrix: indicator matrix from initialization or previous call.
+
+    Returns:
+        consensus_matrix: (sum of linkage matrices) / (sum of indicator matrices).
+    """
+    linkage_matrix = np.zeros((number_of_samples, number_of_samples))
+    indicator_matrix = linkage_matrix.copy()
+
+    linkage_matrix, indicator_matrix = get_linkage_matrix(run_parameters, linkage_matrix, indicator_matrix)
+    consensus_matrix = linkage_matrix / np.maximum(indicator_matrix, 1)
+
+    return consensus_matrix
+
+
+def get_linkage_matrix(run_parameters, linkage_matrix, indicator_matrix):
+    """ read bootstrap temp_h* and temp_p* files, compute and add the linkage_matrix.
+
+    Args:
+        run_parameters: parameter set dictionary.
+        linkage_matrix: connectivity matrix from initialization or previous call.
+
+    Returns:
+        linkage_matrix: summed with "temp_h*" files in run_parameters["tmp_directory"].
+    """
+    if run_parameters['processing_method'] == 'distribute':
+        tmp_dir = os.path.join(run_parameters['cluster_shared_volumn'],
+                               os.path.basename(os.path.normpath(run_parameters['tmp_directory'])))
+    else:
+        tmp_dir = run_parameters["tmp_directory"]
+
+    dir_list = os.listdir(tmp_dir)
+    for tmp_f in dir_list:
+        if tmp_f[0:6] == 'tmp_p_':
+            pname = os.path.join(tmp_dir, tmp_f)
+            hname = os.path.join(tmp_dir, 'tmp_h_' + tmp_f[6:len(tmp_f)])
+
+            sample_permutation = np.load(pname)
+            h_mat = np.load(hname)
+
+            linkage_matrix = update_linkage_matrix(h_mat, sample_permutation, linkage_matrix)
+            indicator_matrix = update_indicator_matrix(sample_permutation, indicator_matrix)
+
+    return linkage_matrix, indicator_matrix
+
 
 def update_linkage_matrix(encode_mat, sample_perm, linkage_matrix):
     ''' update the connectivity matrix by summing the un-permuted linkages.
@@ -685,7 +762,7 @@ def update_indicator_matrix(sample_perm, indicator_matrix):
     return indicator_matrix
 
 
-def perform_kmeans(consensus_matrix, k=3):
+def perform_kmeans(consensus_matrix, k=3, random_state=10):
     """ determine cluster assignments for consensus matrix using K-means.
 
     Args:
@@ -695,7 +772,7 @@ def perform_kmeans(consensus_matrix, k=3):
     Returns:
         lablels: ordered cluster assignments for consensus_matrix (samples).
     """
-    cluster_handle = KMeans(k, random_state=10)
+    cluster_handle = KMeans(n_clusters=k, random_state=random_state)
     labels = cluster_handle.fit_predict(consensus_matrix)
 
     return labels

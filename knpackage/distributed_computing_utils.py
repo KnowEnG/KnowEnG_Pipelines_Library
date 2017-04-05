@@ -18,17 +18,16 @@ def generate_compute_clusters(cluster_ip_addresses, func_name, dependency_list):
     '''
     import sys
     import dispy
-    import logging
 
     try:
         cluster_list = []
         range_list = range(0, len(cluster_ip_addresses))
-        print(range_list)
+
         for i in range_list:
             cur_cluster = dispy.JobCluster(func_name,
                                            nodes=[cluster_ip_addresses[i]],
                                            depends=dependency_list,
-                                           loglevel=logging.WARNING)
+                                           loglevel=dispy.logger.DEBUG)
             cluster_list.append(cur_cluster)
         return cluster_list
     except:
@@ -53,7 +52,7 @@ def create_cluster_worker(cluster, i, *args_to_func):
 
     print("Start creating clusters {}.....".format(str(i)))
     try:
-        print("len of send_args = {}".format(len(args_to_func)))
+        print("Length of passing arguments = {}".format(len(args_to_func)))
         job = cluster.submit(*args_to_func)
         job.id = i
         ret = job()
@@ -156,12 +155,13 @@ def determine_job_number_on_each_compute_node(number_of_bootstraps, number_of_co
     return number_of_scheduled_jobs
 
 
-def determine_parallelism_locally(number_of_loops):
+def determine_parallelism_locally(number_of_loops, user_defined_parallelism=0):
     '''
     Determine the parallelism on the current compute node
 
     Args:
         number_of_loops: total number of loops will be executed on current compute node
+        user_defined_parallelism: a customized parallelism specified by users
 
     Returns:
         number_of_cpu: parallelism on current compute node
@@ -170,10 +170,14 @@ def determine_parallelism_locally(number_of_loops):
     import multiprocessing
 
     number_of_cpu = multiprocessing.cpu_count()
-    if (number_of_loops < number_of_cpu):
-        return number_of_loops
-    else:
-        return number_of_cpu-1
+    # This condition happens when user_defined_parallelism is defined
+    if number_of_loops > 0 and user_defined_parallelism > 0:
+        return min(number_of_cpu, number_of_loops, user_defined_parallelism)
+    # The following conditions happen when user_defined_parallelism is not defined
+    if (number_of_loops <= 0):
+        return 1;
+
+    return min(number_of_cpu, number_of_loops)
 
 
 def move_files(src, dst):
@@ -199,7 +203,7 @@ def move_files(src, dst):
         raise OSError(sys.exc_info())
 
 
-def parallelize_processes_locally(function_name, zipped_arg_list, number_of_loop_to_be_parallelized):
+def parallelize_processes_locally(function_name, zipped_arg_list, parallelism):
     '''
     Locally parallelize processes based on resource in local machine
 
@@ -216,7 +220,6 @@ def parallelize_processes_locally(function_name, zipped_arg_list, number_of_loop
     import multiprocessing
 
     host = socket.gethostname()
-    parallelism = determine_parallelism_locally(number_of_loop_to_be_parallelized)
     try:
         p = multiprocessing.Pool(processes=parallelism)
         p.starmap(function_name, zipped_arg_list)
@@ -245,5 +248,40 @@ def zip_parameters(*args):
     args_list[0:index_before_last] = [itertools.repeat(arg) for arg in args_list[0:index_before_last]]
 
     return zip(*args_list)
+
+
+def execute_distribute_computing_job(cluster_ip_address_list, number_of_bootstraps, func_args, dist_main_function,
+                                     dependency_list):
+    """
+    Executes distribute computing job.
+    Args:
+        cluster_ip_address_list: a list of ip addresses of cluster which will run the job
+        number_of_bootstraps: number of bootstraps
+        func_args: arguments of the function that will be run in distribute mode
+        dist_main_function: the name of the function that will be run in distribute mode
+        dependency_list: a list of dependency functions of dist_main_function
+
+    Returns:
+        NA
+    """
+    print("Start distributing jobs......")
+
+    # determine number of compute nodes to use
+    number_of_comptue_nodes = determine_number_of_compute_nodes(cluster_ip_address_list, number_of_bootstraps)
+    print("Number of compute nodes = {}".format(number_of_comptue_nodes))
+
+    # create clusters
+    cluster_list = generate_compute_clusters(
+        cluster_ip_address_list[0:number_of_comptue_nodes],
+        dist_main_function,
+        dependency_list)
+
+    # calculates number of jobs assigned to each compute node
+    number_of_jobs_each_node = determine_job_number_on_each_compute_node(number_of_bootstraps, len(cluster_list))
+
+    # parallel submitting jobs
+    parallel_submitting_job_to_each_compute_node(cluster_list, number_of_jobs_each_node, *func_args)
+
+    print("Finish distributing jobs......")
 
 
