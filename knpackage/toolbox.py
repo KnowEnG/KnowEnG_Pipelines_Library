@@ -883,12 +883,14 @@ def get_sparse_network_matrix(gg_network_name_full_path):
         gg_network_name_full_path: file path to gene gene network data
 
     Returns:
-        network_mat: a sparse matrix
+        network_mat_sparse: a sparse matrix
         unique_gene_names: a list of unique gene names
     """
     network_df = get_network_df(gg_network_name_full_path)
     node_1_names, node_2_names = extract_network_node_names(network_df)
     unique_gene_names = find_unique_node_names(node_1_names, node_2_names)
+
+    unique_gene_names = sorted(unique_gene_names)
 
     genes_lookup_table = create_node_names_dict(unique_gene_names)
 
