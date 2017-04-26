@@ -883,7 +883,7 @@ def get_sparse_network_matrix(gg_network_name_full_path):
         gg_network_name_full_path: file path to gene gene network data
 
     Returns:
-        network_mat: a normalized sparse matrix
+        network_mat_sparse: a sparse matrix
         unique_gene_names: a list of unique gene names
     """
     network_df = get_network_df(gg_network_name_full_path)
@@ -901,6 +901,4 @@ def get_sparse_network_matrix(gg_network_name_full_path):
     network_mat_sparse = convert_network_df_to_sparse(
         network_df, len(unique_gene_names), len(unique_gene_names))
 
-    network_mat = normalize(network_mat_sparse, norm="l1", axis=0)
-
-    return network_mat, unique_gene_names
+    return network_mat_sparse, unique_gene_names
