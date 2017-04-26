@@ -45,8 +45,11 @@ def check_input_value_for_gene_prioritazion(data_frame, phenotype_df):
     if not common_headers:
         return None, None, "Cannot find intersection between user spreadsheet column and phenotype data."
 
+    # sorts common_headers to be in same order
+    common_headers.sort()
+
     # select common column to process, this operation will reorder the column
-    data_frame_trimed = data_frame[common_headers]
+    data_frame_trimed = data_frame_dropna[common_headers]
     phenotype_trimed = phenotype_df_dropna[common_headers]
 
     if data_frame_trimed.empty:
