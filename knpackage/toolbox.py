@@ -112,14 +112,14 @@ def extract_network_node_names(network_df):
         node_list_2: all names in column 2.
     """
 
-    node_list_1 = list(set(network_df.values[:, 0]))
-    node_list_2 = list(set(network_df.values[:, 1]))
+    node_list_1 = list( sorted( set(network_df.values[:, 0]) ) )
+    node_list_2 = list( sorted( set(network_df.values[:, 1]) ) )
 
     return node_list_1, node_list_2
 
 
 def find_unique_node_names(node_list_1, node_list_2):
-    """ get the list (set union) of genes in either of the input lists.
+    """ get the list (sorted( set union) of genes in either of the input lists.
 
     Args:
         node_list_1: list of node names.
@@ -128,7 +128,7 @@ def find_unique_node_names(node_list_1, node_list_2):
     Returns:
         unique_node_names: unique list of all node names.
     """
-    unique_node_names = list(set(node_list_1) | set(node_list_2))
+    unique_node_names = list( sorted( set(node_list_1)|set(node_list_2) ) )
 
     return unique_node_names
 
@@ -143,7 +143,7 @@ def find_common_node_names(node_list_1, node_list_2):
     Returns:
         common_node_names: unique list of common node names.
     """
-    common_node_names = list(set(node_list_1) & set(node_list_2))
+    common_node_names = list( sorted( set(node_list_1)&set(node_list_2) ) )
 
     return common_node_names
 
@@ -157,7 +157,7 @@ def extract_spreadsheet_gene_names(spreadsheet_df):
     Returns:
         spreadsheet_gene_names: list of spreadsheet genes.
     """
-    spreadsheet_gene_names = list(set(spreadsheet_df.index.values))
+    spreadsheet_gene_names = list( sorted( set(spreadsheet_df.index.values) ) )
 
     return spreadsheet_gene_names
 
