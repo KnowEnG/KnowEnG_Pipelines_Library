@@ -1,2 +1,2 @@
-all:
-	cd ./test/unit; make all_unit_tests
+upload_knpackage:
+	python3 setup.py register sdist upload
