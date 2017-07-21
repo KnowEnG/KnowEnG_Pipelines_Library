@@ -73,6 +73,11 @@ def get_spreadsheet_df(spreadsheet_name_full_path):
     """
     try:
         spreadsheet_df = pd.read_csv(spreadsheet_name_full_path, sep='\t', header=0, index_col=0)
+
+        # casting index and columns to String type
+        spreadsheet_df.index = spreadsheet_df.index.map(str)
+        spreadsheet_df.columns = spreadsheet_df.columns.map(str)
+
     except IOError:
         print("Unexpected error during reading input file {}: {}".format(spreadsheet_name_full_path,
                                                                          sys.exc_info()[0]))
