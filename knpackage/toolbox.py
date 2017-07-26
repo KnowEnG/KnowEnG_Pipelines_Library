@@ -117,8 +117,8 @@ def extract_network_node_names(network_df):
         node_list_2: all names in column 2.
     """
 
-    node_list_1 = list( sorted( set(network_df.values[:, 0]) ) )
-    node_list_2 = list( sorted( set(network_df.values[:, 1]) ) )
+    node_list_1 = list(sorted(set(network_df.values[:, 0])))
+    node_list_2 = list(sorted(set(network_df.values[:, 1])))
 
     return node_list_1, node_list_2
 
@@ -133,7 +133,7 @@ def find_unique_node_names(node_list_1, node_list_2):
     Returns:
         unique_node_names: unique list of all node names.
     """
-    unique_node_names = list( sorted( set(node_list_1)|set(node_list_2) ) )
+    unique_node_names = list(sorted(set(node_list_1) | set(node_list_2)))
 
     return unique_node_names
 
@@ -148,7 +148,7 @@ def find_common_node_names(node_list_1, node_list_2):
     Returns:
         common_node_names: unique list of common node names.
     """
-    common_node_names = list( sorted( set(node_list_1)&set(node_list_2) ) )
+    common_node_names = list(sorted(set(node_list_1) & set(node_list_2)))
 
     return common_node_names
 
@@ -162,7 +162,7 @@ def extract_spreadsheet_gene_names(spreadsheet_df):
     Returns:
         spreadsheet_gene_names: list of spreadsheet genes.
     """
-    spreadsheet_gene_names = list( sorted( set(spreadsheet_df.index.values) ) )
+    spreadsheet_gene_names = list(sorted(set(spreadsheet_df.index.values)))
 
     return spreadsheet_gene_names
 
@@ -648,6 +648,7 @@ def perform_nmf(x_matrix, run_parameters):
 
     return h_matrix
 
+
 def save_a_clustering_to_tmp(h_matrix, sample_permutation, run_parameters, sequence_number):
     """ save one h_matrix and one permutation in temorary files with sequence_number appended names.
 
@@ -664,8 +665,8 @@ def save_a_clustering_to_tmp(h_matrix, sample_permutation, run_parameters, seque
 
     os.makedirs(tmp_dir, mode=0o755, exist_ok=True)
 
-    hname = os.path.join(tmp_dir, 'tmp_h_%d'%(sequence_number))
-    pname = os.path.join(tmp_dir, 'tmp_p_%d'%(sequence_number))
+    hname = os.path.join(tmp_dir, 'tmp_h_%d' % (sequence_number))
+    pname = os.path.join(tmp_dir, 'tmp_p_%d' % (sequence_number))
 
     cluster_id = np.argmax(h_matrix, 0)
     with open(hname, 'wb') as fh0:
