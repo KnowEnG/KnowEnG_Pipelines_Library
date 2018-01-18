@@ -12,6 +12,19 @@ There are four modules that one can choose from:
 
 
 * * * 
+## How to build library: knpackage
+* * * 
+
+### 1. Setup configuration on your machine
+Follow ([steps to create the scaffolding](http://python-packaging.readthedocs.io/en/latest/minimal.html#creating-the-scaffolding)) before push your package from your machine.  
+
+### 2. Push packages to PyPI
+Follow ([steps to push package to PyPI repository](http://python-packaging.readthedocs.io/en/latest/minimal.html#publishing-on-pypi)) to push your package from your machine.  
+
+**Note: knpackage doesn't contain any source code. It provides the necessary basic package dependencies to run KnowEnG pipeline.**
+
+
+* * * 
 ## How to use this library
 * * * 
 
@@ -29,5 +42,13 @@ pip3 install knpackage
 ```
 import knpackage.<module_name>
 ```
+
+
+
+
+
+
+
+
 
 
