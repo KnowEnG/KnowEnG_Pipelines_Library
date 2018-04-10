@@ -1,5 +1,8 @@
 FROM ubuntu:14.04
-MAINTAINER Jing Ge <jingge2@illinois.edu>
+LABEL Xi Chen="xichen24@illinois.edu" \
+      Jing Ge="jingge2@illinois.edu" \
+      Dan Lanier="lanier4@illinois.edu" \
+      Nahil Sobh="sobh@illinois.edu"
 
 # Install packages and their dependencies
 RUN apt-get update && \
