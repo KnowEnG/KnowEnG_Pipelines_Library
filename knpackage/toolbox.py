@@ -191,7 +191,7 @@ def update_spreadsheet_df(spreadsheet_df, gene_names):
         pandas dataframe of spreadsheet with only network genes.
     """
 
-    return spreadsheet_df.loc[gene_names].fillna(0)
+    return spreadsheet_df.reindex(labels=gene_names, fill_value=0)
 
 
 def update_network_df(network, nodes_list, node_id):
