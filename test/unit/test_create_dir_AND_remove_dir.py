@@ -26,7 +26,7 @@ class TestCreate_dir_AND_remove_dir(TestCase):
         a_name = os.path.join(new_directory_name, 'temp_test' + time_stamp)
         with open(a_name, 'wb') as fh:
             A.dump(fh)
-        A_back = np.load(a_name)
+        A_back = np.load(a_name, allow_pickle=True)
         if os.path.isfile(a_name):
             os.remove(a_name)
         A_diff = A - A_back
